@@ -11,9 +11,6 @@ import br.ufsc.ctc.ine.sin.ine5622.view.TelaPrincipal;
 
 public class Principal {
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 
 		Lexico lexico = new Lexico();
