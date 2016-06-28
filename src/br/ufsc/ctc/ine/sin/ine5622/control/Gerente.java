@@ -1,15 +1,15 @@
-package Control;
+package br.ufsc.ctc.ine.sin.ine5622.control;
 
 import java.io.File;
 import java.io.StringReader;
 
-import Analisador.AnalysisError;
-import Analisador.LexicalError;
-import Analisador.Lexico;
-import Analisador.Semantico;
-import Analisador.Sintatico;
-import Analisador.Token;
-import Model.ManipuladorArquivo;
+import br.ufsc.ctc.ine.sin.ine5622.infra.ManipuladorArquivo;
+import br.ufsc.ctc.ine.sin.ine5622.model.AnalysisError;
+import br.ufsc.ctc.ine.sin.ine5622.model.LexicalError;
+import br.ufsc.ctc.ine.sin.ine5622.model.Lexico;
+import br.ufsc.ctc.ine.sin.ine5622.model.Semantico;
+import br.ufsc.ctc.ine.sin.ine5622.model.Sintatico;
+import br.ufsc.ctc.ine.sin.ine5622.model.Token;
 
 public class Gerente {
 
@@ -18,13 +18,11 @@ public class Gerente {
 	private Sintatico sintatico;
 	private Semantico semantico;
 
-	/**
-	 * Construtor
-	 */
-	public Gerente() {
-		ma = new ManipuladorArquivo();
-		lexico = new Lexico();
-		sintatico = new Sintatico();
+	public Gerente(ManipuladorArquivo ma, Lexico lexico, Sintatico sintatico, Semantico semantico) {
+		this.ma = new ManipuladorArquivo();
+		this.lexico = new Lexico();
+		this.sintatico = sintatico;
+		this.semantico = semantico;
 	}
 
 	/**

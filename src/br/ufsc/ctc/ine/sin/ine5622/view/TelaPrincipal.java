@@ -1,4 +1,4 @@
-package View;
+package br.ufsc.ctc.ine.sin.ine5622.view;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -8,11 +8,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
-import Analisador.AnalysisError;
-import Analisador.LexicalError;
-import Analisador.SemanticError;
-import Analisador.SyntaticError;
-import Control.Gerente;
+import br.ufsc.ctc.ine.sin.ine5622.control.Gerente;
+import br.ufsc.ctc.ine.sin.ine5622.model.AnalysisError;
+import br.ufsc.ctc.ine.sin.ine5622.model.LexicalError;
+import br.ufsc.ctc.ine.sin.ine5622.model.SemanticError;
+import br.ufsc.ctc.ine.sin.ine5622.model.SyntaticError;
 
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
@@ -48,6 +48,7 @@ public class TelaPrincipal {
 		JMenuBar menuBar = new JMenuBar();
 		frmCompiladorLsi.setJMenuBar(menuBar);
 		configurarMenuArquivo(menuBar);
+		configurarBotaoAnaliseLexica(menuBar);
 		configurarBotaoAnaliseSintatica(menuBar);
 		configurarBotaoAjuda(menuBar);
 	}
@@ -58,7 +59,7 @@ public class TelaPrincipal {
 		configurarBotaoAbrir(menuArquivo);
 		configurarBotaoSalvar(menuArquivo);
 		configurarBotaoSalvarComo(menuArquivo);
-		configurarBotaoAnaliseLexica(menuBar);
+
 	}
 
 	private void configurarBotaoSalvarComo(JMenu menuArquivo) {
@@ -138,6 +139,7 @@ public class TelaPrincipal {
 	public void analiseLexica (String conteudo) {
 		try {
 			gerente.analisadorLexico(conteudo);
+			informeUsuario("Nenhum erro léxico.");
 		} catch (LexicalError e) {
 			tratarErroDeAnalise(e);
 		}
@@ -146,6 +148,7 @@ public class TelaPrincipal {
 	public void analiseSintatica(String conteudo) {
 		try {
 			gerente.analisadorSintatico(conteudo);
+			informeUsuario("Nenhum erro léxico ou sintático.");
 		} catch (AnalysisError e) {
 			tratarErroDeAnalise(e);
 		}
@@ -157,7 +160,7 @@ public class TelaPrincipal {
 		mensagem += (e instanceof LexicalError)  ? "léxico" :
 					(e instanceof SyntaticError) ? "sintático" :
 					(e instanceof SemanticError) ? "semântico" : "";
-		mensagem += ":\n\n" + "Msg: " + e.getMessage() + "\nPosição: ";
+		mensagem += ":\n\n" + "Msg: " + e.getMessage() + "\nPosição: " + e.getPosition();
 		this.informeUsuario(mensagem);
 	}
 

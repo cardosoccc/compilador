@@ -1,4 +1,4 @@
-package Model;
+package br.ufsc.ctc.ine.sin.ine5622.infra;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
