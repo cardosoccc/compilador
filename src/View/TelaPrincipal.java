@@ -155,7 +155,7 @@ public class TelaPrincipal {
 		this.textArea.setCaretPosition(e.getPosition());
 		String mensagem = "Encontrado um erro ";
 		mensagem += (e instanceof LexicalError)  ? "léxico" :
-			        (e instanceof SyntaticError) ? "sintático" :
+                    (e instanceof SyntaticError) ? "sintático" :
                     (e instanceof SemanticError) ? "semântico" : "";
 		mensagem += ":\n\n" + "Msg: " + e.getMessage() + "\nPosição: ";
 		this.informeUsuario(mensagem);
