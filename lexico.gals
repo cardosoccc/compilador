@@ -1,0 +1,88 @@
+#Options
+GenerateScanner = true
+GenerateParser = false
+Language = Java
+ScannerName = Lexico
+ScannerCaseSensitive = true
+ScannerTable = Full
+Input = Stream
+#RegularDefinitions
+L : [a-zA-Z]
+D : [0-9]
+CE : [_@]
+Sin : [\+\-]
+CC : [\ \t\n\r]
+iCom : /"*"
+fCom : "*"/
+
+#Tokens
+
+
+id : ({L}|@) ( {CE}? ({L}|{D}) )*    //incia com L ou @, não termina com CE, não tem CEs consecutivos
+
+numInteiro : {D}+ ( [eE] {Sin}? {D}{D}+ )?
+
+numReal : ( {D}+\.{D}* | {D}*\.{D}+ ) ( [eE] {Sin}? {D}{D}+ )?
+
+constLiteral :! ' ( [^"'"] | ('') )* '
+
+
+//Caracters de controle
+: {CC}*
+
+//Comentario de Linha
+: # [^\n]* \n
+
+//Comentario de Bloco //Ver se é válido, pois considera /**/*/ como um comentário + dois simbolos esp.
+:! {iCom}   ("/"*  "*"*  ([^"*/"]) )*  "/"*  "*"*  {fCom} 
+
+
+
+//Simbolos especiais
+";"
+","
+"."
+">"
+"<"
+"="
+"("
+")"
+"["
+"]"
+"+"
+"-"
+"*"
+"/"
+":"
+":="
+".."
+"<>"
+"<="
+
+//palavras reservadas
+programa 	= id : "programa"
+var 		= id : "var"
+caracter 	= id : "caracter"
+cadeia 		= id : "cadeia"
+procedimento 	= id : "procedimento"
+inicio 		= id : "inicio"
+fim 		= id : "fim"
+inteiro 		= id : "inteiro"
+booleano 	= id : "booleano"
+funcao 		= id : "funcao"
+se 		= id : "se"
+entao 		= id : "entao"
+senao 		= id : "senao"
+leia 		= id : "leia"
+escreva 		= id : "escreva"
+ou 		= id : "ou"
+e 		= id : "e"
+nao 		= id : "nao"
+falso 		= id : "falso"
+verdadeiro 	= id : "verdadeiro"
+de 		= id : "de"
+faca 		= id : "faca"
+real 		= id : "real"
+vetor 		= id : "vetor"
+enquanto 	= id : "enquanto"
+

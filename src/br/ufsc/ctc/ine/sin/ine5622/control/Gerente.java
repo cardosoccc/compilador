@@ -19,8 +19,8 @@ public class Gerente {
 	private Semantico semantico;
 
 	public Gerente(ManipuladorArquivo ma, Lexico lexico, Sintatico sintatico, Semantico semantico) {
-		this.ma = new ManipuladorArquivo();
-		this.lexico = new Lexico();
+		this.ma = ma;
+		this.lexico = lexico;
 		this.sintatico = sintatico;
 		this.semantico = semantico;
 	}
@@ -77,10 +77,6 @@ public class Gerente {
 	 * @param entrada
 	 *            texto do código a ser analisado
 	 *
-	 * @param tela
-	 *            fram que possui método para envio de mensagem ao usuário
-	 *
-	 * @return posiçao em que ocorreu um erro ou negativo caso não encontre erro
 	 * @throws LexicalError
 	 */
 	public void analisadorLexico(String entrada) throws LexicalError {
