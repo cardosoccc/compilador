@@ -6,7 +6,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
 
 import br.ufsc.ctc.ine.sin.ine5622.control.Gerente;
 import br.ufsc.ctc.ine.sin.ine5622.model.AnalysisError;
@@ -43,7 +46,9 @@ public class TelaPrincipal {
 		frmCompiladorLsi.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		textArea = new JTextArea();
-		frmCompiladorLsi.getContentPane().add(textArea, BorderLayout.CENTER);
+		JScrollPane scrollPane = new JScrollPane(textArea);
+		frmCompiladorLsi.getContentPane().add(scrollPane, BorderLayout.CENTER);
+		
 
 		JMenuBar menuBar = new JMenuBar();
 		frmCompiladorLsi.setJMenuBar(menuBar);
@@ -89,8 +94,10 @@ public class TelaPrincipal {
 		menuAbrir.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if(carregarArquivo())
+				if(carregarArquivo()){
 					textArea.setText(gerente.getConteudoArquivo());
+					textArea.setCaretPosition(0);
+				}
 			}
 		});
 		menuArquivo.add(menuAbrir);
@@ -154,6 +161,9 @@ public class TelaPrincipal {
 		}
 	}
 
+	/**
+	 * Verifica tipo de erro e monta mensagem para o usuário
+	 */
 	private void tratarErroDeAnalise(AnalysisError e) {
 		this.textArea.setCaretPosition(e.getPosition());
 		String mensagem = "Encontrado um erro ";
