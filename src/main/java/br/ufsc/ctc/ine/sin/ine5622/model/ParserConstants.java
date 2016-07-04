@@ -193,39 +193,39 @@ public interface ParserConstants
         "Era esperado val",
         "Era esperado retorne",
         "Era esperado div",
-        "<programa> inválido",
-        "<bloco> inválido",
-        "<dcl_var_const> inválido",
-        "<tipo> inválido",
-        "<dimensao> inválido",
-        "<lid> inválido",
-        "<rep_lid> inválido",
-        "<fator_const> inválido",
-        "<dcl_metodos> inválido",
-        "<dcl_metodo> inválido",
-        "<par_formais> inválido",
-        "<rep_par> inválido",
-        "<tipo_metodo> inválido",
-        "<mp_par> inválido",
-        "<com_composto> inválido",
-        "<replistacomando> inválido",
-        "<comando> inválido",
-        "<senaoparte> inválido",
-        "<rcomid> inválido",
-        "<lista_expr> inválido",
-        "<rep_lexpr> inválido",
-        "<expressao> inválido",
-        "<resto_expressao> inválido",
-        "<oprel> inválido",
-        "<expsimp> inválido",
-        "<rep_expsimp> inválido",
-        "<op_add> inválido",
-        "<termo> inválido",
-        "<rep_termo> inválido",
-        "<op_mult> inválido",
-        "<fator> inválido",
-        "<rvar> inválido",
-        "<constante> inválido",
-        "<constante_explicita> inválido"
+        "Era esperado programa ",// <programa>
+        "Era esperado inteiro, real, booleano, caracter ou cadeia ",// <bloco>
+        "Era esperado inteiro, real, booleano, caracter ou cadeia ",// <dcl_var_const>
+        "Era esperado inteiro, real, booleano, caracter ou cadeia ",// <<tipo>
+        "Era esperado \"[\"",// <dimensao>
+        "Era esperado id",// <lid>",
+        "Era esperado \",\"",// <rep_lid>
+        "Era esperado \"=\"", // <fator_const>
+        "Era esperado metodo", // <dcl_metodos>
+        "Era esperado metodo", // <dcl_metodo>
+        "Era esperado \"(\"", // <par_formais>
+        "Era esperado \";\"", // <rep_par>
+        "Era esperado \":\"", // <tipo_metodo>
+        "Era esperado ref ou val", //<mp_par>
+        "Era esperado \"{\"", // <com_composto>
+        "Era esperado \";\"", // <replistacomando>
+        "Era esperado id, se, enquanto, leia, escreva, retorne ou \";\"", // <comando>
+        "Era esperado senao", // <senaoparte>
+        "Era esperado \":=\", \"[\", ou \"(\"", // <rcomid>
+        "Era esperado nao, id, num_int, num_real, falso, verdadeiro, literal, \"-\" ou \"(\"", // <lista_expr>
+        "Era esperado \",\"", // <rep_lexpr>
+        "Era esperado nao, id, num_int, num_real, falso, verdadeiro, literal, \"-\" ou \"(\"", // <expressao>
+        "Era esperado \"=\", \"<\", ou \">\"", // <resto_expressao> inválido",
+        "Era esperado \"=\", \"<\", ou \">\"", // <oprel>
+        "Era esperado nao, id, num_int, num_real, falso, verdadeiro, literal, \"-\" ou \"(\"", // <expsimp>
+        "Era esperado ou, \"+\", \"-\"", // <rep_expsimp>
+        "Era esperado ou, \"+\", \"-\"", // <op_add>
+        "Era esperado nao, id, num_int, num_real, falso, verdadeiro, literal, \"-\" ou \"(\"", // <termo>
+        "Era esperado div, e, \"*\" ou \"/\"", // <rep_termo> inválido",
+        "Era esperado div, e, \"*\" ou \"/\"", // <op_mult> inválido",
+        "Era esperado nao, id, num_int, num_real, falso, verdadeiro, literal, \"-\" ou \"(\"", // <fator>
+        "Era esperado \"[\" ou \"(\"", // <rvar> inválido",
+        "Era esperado id, num_int, num_real, falso, verdadeiro ou literal", // <constante> inválido",
+        "Era esperado num_int, num_real, falso, verdadeiro ou literal", // <constante_explicita> inválido"
     };
 }
