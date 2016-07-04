@@ -6,6 +6,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import br.ufsc.ctc.ine.sin.ine5622.control.Gerente;
@@ -43,7 +44,8 @@ public class TelaPrincipal {
 		frmCompiladorLsi.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		textArea = new JTextArea();
-		frmCompiladorLsi.getContentPane().add(textArea, BorderLayout.CENTER);
+		JScrollPane jScrollPane = new JScrollPane(textArea);
+		frmCompiladorLsi.getContentPane().add(jScrollPane, BorderLayout.CENTER);
 
 		JMenuBar menuBar = new JMenuBar();
 		frmCompiladorLsi.setJMenuBar(menuBar);
@@ -63,7 +65,7 @@ public class TelaPrincipal {
 	}
 
 	private void configurarBotaoSalvarComo(JMenu menuArquivo) {
-		JMenuItem menuSalvarComo = new JMenuItem("Salvar Como..");
+		JMenuItem menuSalvarComo = new JMenuItem("Salvar Como...");
 		menuSalvarComo.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
