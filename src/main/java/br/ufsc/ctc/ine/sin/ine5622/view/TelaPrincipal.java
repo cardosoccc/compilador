@@ -1,3 +1,7 @@
+/**
+ * @author Vitor Schweitzer e Caio Cardoso
+ * created on 2016/06/18
+ */
 package br.ufsc.ctc.ine.sin.ine5622.view;
 
 import javax.swing.JFileChooser;
@@ -44,8 +48,8 @@ public class TelaPrincipal {
 		frmCompiladorLsi.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		textArea = new JTextArea();
-		JScrollPane jScrollPane = new JScrollPane(textArea);
-		frmCompiladorLsi.getContentPane().add(jScrollPane, BorderLayout.CENTER);
+		JScrollPane scrollPane = new JScrollPane(textArea);
+		frmCompiladorLsi.getContentPane().add(scrollPane, BorderLayout.CENTER);
 
 		JMenuBar menuBar = new JMenuBar();
 		frmCompiladorLsi.setJMenuBar(menuBar);
@@ -91,8 +95,10 @@ public class TelaPrincipal {
 		menuAbrir.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if(carregarArquivo())
+				if(carregarArquivo()){
 					textArea.setText(gerente.getConteudoArquivo());
+					textArea.setCaretPosition(0);
+				}
 			}
 		});
 		menuArquivo.add(menuAbrir);
@@ -156,6 +162,9 @@ public class TelaPrincipal {
 		}
 	}
 
+	/**
+	 * Verifica tipo de erro e monta mensagem para o usuário
+	 */
 	private void tratarErroDeAnalise(AnalysisError e) {
 		this.textArea.setCaretPosition(e.getPosition());
 		String mensagem = "Encontrado um erro ";
