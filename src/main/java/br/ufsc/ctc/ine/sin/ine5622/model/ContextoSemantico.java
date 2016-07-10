@@ -13,7 +13,7 @@ public class ContextoSemantico {
 	private int primeiraPosicaoListaDeclaracao;
 	private int ultimaPosicaoListaDeclaracao;
 	private String tipoConst;
-	private int valConst;
+	private String valConst;
 	private int numElementos;
 	private int numParametrosFormais;
 
@@ -59,6 +59,14 @@ public class ContextoSemantico {
 		return this.listaDeclaracao;
 	}
 
+	public int getPrimeiraPosicaoListaDeclaracao() {
+		return this.primeiraPosicaoListaDeclaracao;
+	}
+
+	public int getUltimaPosicaoListaDeclaracao() {
+		return this.ultimaPosicaoListaDeclaracao;
+	}
+
 	public String getCategoriaAtual() {
 		return this.categoriaAtual;
 	}
@@ -67,8 +75,16 @@ public class ContextoSemantico {
 		return this.tipoConst;
 	}
 
-	public int getValConst() {
+	public void setTipoConst(String tipoConst) {
+		this.tipoConst = tipoConst;
+	}
+
+	public String getValConst() {
 		return this.valConst;
+	}
+
+	public void setValConst(String valConst) {
+		this.valConst = valConst;
 	}
 
 	public void setNumElementos(int numElements) {
@@ -77,6 +93,18 @@ public class ContextoSemantico {
 
 	public String getSubCategoria() {
 		return this.subCategoria;
+	}
+
+	public int getNumElementos() {
+		return numElementos;
+	}
+
+	public int getNumParametrosFormais() {
+		return numParametrosFormais;
+	}
+
+	public void setNumParametrosFormais(int numParametrosFormais) {
+		this.numParametrosFormais = numParametrosFormais;
 	}
 
 	public void incrementaNumParametrosFormais() {

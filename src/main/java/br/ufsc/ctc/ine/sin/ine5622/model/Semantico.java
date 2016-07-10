@@ -12,6 +12,8 @@ public class Semantico implements Constants {
 
     private ContextoSemantico contextoSemantico;
 
+    private boolean geradorCodigoAcionado = false;
+
     public Semantico() {
     	this.tabelaDeSimbolos = new TabelaDeSimbolos();
     	this.contextoSemantico = new ContextoSemantico();
@@ -24,7 +26,6 @@ public class Semantico implements Constants {
 			actionMethod.invoke(this, token);
 		} catch (InvocationTargetException e) {
 			Throwable t = e.getTargetException();
-			t.printStackTrace();
 			if (t instanceof SemanticError) {
 				throw new SemanticError("#" + action + ": " + t.getMessage(), token.getPosition());
 			}
@@ -46,7 +47,7 @@ public class Semantico implements Constants {
 		this.contextoSemantico.inicializaListaDeclaracao();
 	}
 
-	public void action103(Token token) {
+	public void action103(Token token) throws SemanticError {
 		this.contextoSemantico.setUltimaPosicaoListaDeclaracao(this.tabelaDeSimbolos.getDeslocamento());
 	}
 
@@ -60,14 +61,16 @@ public class Semantico implements Constants {
 			if (categoriaAtual.equals("variavel")) {
 				identificador = new IdVariavel(id);
 			} else {
-				identificador = new IdConstante(id);
-				identificador.setValor(this.contextoSemantico.getValConst());
+				IdConstante idConstante = new IdConstante(id);
+				idConstante.setValor(this.contextoSemantico.getValConst());
+				identificador = idConstante;
 			}
 
 			identificador.setTipo(this.contextoSemantico.getTipoAtual());
 
 			if (subCategoria.equals("vetor")) {
-				identificador.setTamanho(this.getContextoSemantico().getValConst());
+				Integer intValConst = Integer.parseInt(this.getContextoSemantico().getValConst());
+				identificador.setTamanho(intValConst);
 			} else {
 				identificador.setTamanho(1);
 			}
@@ -93,10 +96,13 @@ public class Semantico implements Constants {
 	}
 
 	public void action109(Token token) throws SemanticError {
-		int valConst = this.getContextoSemantico().getValConst();
-		if (this.contextoSemantico.getTipoConst().equals("inteiro")) {
+
+		if (!this.contextoSemantico.getTipoConst().equals("inteiro")) {
 			throw new SemanticError("Esperava-se uma constante inteira", token.getPosition());
-		} else if (valConst > 256) {
+		}
+
+		int valConst = Integer.parseInt(this.getContextoSemantico().getValConst());
+		if (valConst > 256) {
 			throw new SemanticError("Cadeia com tamanho maior que o permitido (" + valConst + " > 256)", token.getPosition());
 		} else {
 			this.contextoSemantico.setTipoAtual("cadeia");
@@ -112,10 +118,11 @@ public class Semantico implements Constants {
 	}
 
 	public void action111(Token token) throws SemanticError {
-		if (this.contextoSemantico.getTipoConst().equals("inteiro")) {
+		if (!this.contextoSemantico.getTipoConst().equals("inteiro")) {
 			throw new SemanticError("A dimensão deve ser uma constante inteira", token.getPosition());
 		} else {
-			this.contextoSemantico.setNumElementos(this.contextoSemantico.getValConst());
+			int valConst = Integer.parseInt(this.getContextoSemantico().getValConst());
+			this.contextoSemantico.setNumElementos(valConst);
 		}
 	}
 
@@ -148,7 +155,15 @@ public class Semantico implements Constants {
 				this.tabelaDeSimbolos.incluirIdentificador(id);
 			}
 		} else if (contextoLID.equals("leitura")) {
-//			TODO:
+			if (id == null) {
+				throw new SemanticError("Id não declarado", token.getPosition());
+			} else if (!categoriaValidaParaLeitura(id)) {
+				throw new SemanticError("Categoria inválida para leitura", token.getPosition());
+			} else if (!tipoValidoParaLeitura((IdComSubCategoria) id)) {
+				throw new SemanticError("Tipo inválido para leitura", token.getPosition());
+			} else {
+				this.geradorCodigoAcionado = true;
+			}
 		}
 	}
 
@@ -171,6 +186,48 @@ public class Semantico implements Constants {
 		this.contextoSemantico.setCategoriaAtual("variavel");
 	}
 
+	public void action175(Token token) throws SemanticError {
+		Identificador id = this.tabelaDeSimbolos.getIdentificador(token.getLexeme());
+		if (id == null) {
+			throw new SemanticError("Id não declarado", token.getPosition());
+		} else if (!(id instanceof IdConstante)) {
+			throw new SemanticError("Id de constante esperado", token.getPosition());
+		} else {
+			IdConstante idConstante = (IdConstante) id;
+			this.contextoSemantico.setTipoConst(id.getTipo());
+			this.contextoSemantico.setValConst(idConstante.getValor());
+		}
+	}
+
+	public void action176(Token token) throws SemanticError {
+		this.contextoSemantico.setTipoConst("inteiro");
+		this.contextoSemantico.setValConst(token.getLexeme());
+	}
+
+	public void action177(Token token) throws SemanticError {
+		this.contextoSemantico.setTipoConst("real");
+		this.contextoSemantico.setValConst(token.getLexeme());
+	}
+
+	public void action178(Token token) throws SemanticError {
+		this.contextoSemantico.setTipoConst("booleano");
+		this.contextoSemantico.setValConst(token.getLexeme());
+	}
+
+	public void action179(Token token) throws SemanticError {
+		this.contextoSemantico.setTipoConst("booleano");
+		this.contextoSemantico.setValConst(token.getLexeme());
+	}
+
+	public void action180(Token token) throws SemanticError {
+		if (token.getLexeme().length() > 1) {
+			this.contextoSemantico.setTipoConst("cadeia");
+		} else {
+			this.contextoSemantico.setTipoConst("caractere");
+		}
+		this.contextoSemantico.setValConst(token.getLexeme());
+	}
+
 	public TabelaDeSimbolos getTabelaDeSimbolos() {
 		return tabelaDeSimbolos;
 	}
@@ -186,4 +243,22 @@ public class Semantico implements Constants {
 	public void setContextoSemantico(ContextoSemantico contextoSemantico) {
 		this.contextoSemantico = contextoSemantico;
 	}
+
+	public boolean isGeradorCodigoAcionado() {
+		return geradorCodigoAcionado;
+	}
+
+	public void setGeradorCodigoAcionado(boolean geradorCodigoAcionado) {
+		this.geradorCodigoAcionado = geradorCodigoAcionado;
+	}
+
+	private boolean categoriaValidaParaLeitura(Identificador id) {
+		return id instanceof IdVariavel || id instanceof IdParametro;
+	}
+
+	private boolean tipoValidoParaLeitura(IdComSubCategoria id) {
+		return id.getSubCategoria().equals("cadeia")
+				|| (id.getSubCategoria().equals("pre-definido") && !id.getTipo().equals("booleano"));
+	}
+
 }

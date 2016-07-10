@@ -44,6 +44,11 @@ public class TabelaDeSimbolos {
 	}
 
 
+	public int getNivelAtual() {
+		return nivelAtual;
+	}
+
+
 	public Identificador getIdentificador(String idName) {
 		Identificador id = null;
 		if (identificadoresPorNivel.containsKey(this.nivelAtual)) {

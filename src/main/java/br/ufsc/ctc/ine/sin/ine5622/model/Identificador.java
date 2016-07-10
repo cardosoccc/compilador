@@ -2,13 +2,11 @@ package br.ufsc.ctc.ine.sin.ine5622.model;
 
 public class Identificador {
 
-
 	private String nome;
 	private int nivel;
 	private int deslocamento;
 	private int tamanho;
 	private String tipo;
-	private int valor;
 
 	public Identificador(String nome) {
 		this.nome = nome;
@@ -16,6 +14,10 @@ public class Identificador {
 
 	public String getNome() {
 		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
 	public void setNivel(int nivelAtual) {
@@ -47,9 +49,9 @@ public class Identificador {
 		this.tipo = tipo;
 	}
 
-	public void setValor(int valor) {
-		this.valor = valor;
-
+	public String getTipo() {
+		return tipo;
 	}
+
 
 }

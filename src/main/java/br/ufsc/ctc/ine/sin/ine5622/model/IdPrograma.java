@@ -5,6 +5,7 @@ public class IdPrograma extends Identificador {
 
 	public IdPrograma(String nome) {
 		super(nome);
+		this.setTamanho(1);
 	}
 
 }
