@@ -166,7 +166,9 @@ public class TelaPrincipal {
 	 * Verifica tipo de erro e monta mensagem para o usuário
 	 */
 	private void tratarErroDeAnalise(AnalysisError e) {
-		this.textArea.setCaretPosition(e.getPosition());
+		if (e.getPosition() >= 0) {
+			this.textArea.setCaretPosition(e.getPosition());
+		}
 		String mensagem = "Encontrado um erro ";
 		mensagem += (e instanceof LexicalError)  ? "léxico" :
 					(e instanceof SyntaticError) ? "sintático" :

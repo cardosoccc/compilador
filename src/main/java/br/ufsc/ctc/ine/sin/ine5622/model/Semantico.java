@@ -186,6 +186,238 @@ public class Semantico implements Constants {
 		this.contextoSemantico.setCategoriaAtual("variavel");
 	}
 
+	public void action117(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action118(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action119(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action120(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action121(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action122(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action123(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action124(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action125(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action126(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action127(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action128(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action129(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action130(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action131(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action132(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action133(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action134(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action135(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action136(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action137(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action138(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action139(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action140(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action141(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action142(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action143(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action144(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action145(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action146(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action147(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action148(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action149(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action150(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action151(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action152(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action153(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action154(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action155(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action156(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action157(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action158(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action159(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action160(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action161(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action162(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action163(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action164(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action165(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action166(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action167(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action168(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action169(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action170(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action171(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action172(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action173(Token token) throws SemanticError {
+		// TODO
+	}
+
+	public void action174(Token token) throws SemanticError {
+		// TODO
+	}
+
 	public void action175(Token token) throws SemanticError {
 		Identificador id = this.tabelaDeSimbolos.getIdentificador(token.getLexeme());
 		if (id == null) {
@@ -220,11 +452,13 @@ public class Semantico implements Constants {
 	}
 
 	public void action180(Token token) throws SemanticError {
-		if (token.getLexeme().length() > 1) {
+		if (token.getLexeme().length() > 3) {
 			this.contextoSemantico.setTipoConst("cadeia");
 		} else {
-			this.contextoSemantico.setTipoConst("caractere");
+			this.contextoSemantico.setTipoConst("caracter");
 		}
+		System.out.println(token.getLexeme());
+		System.out.println(this.contextoSemantico.getTipoConst());
 		this.contextoSemantico.setValConst(token.getLexeme());
 	}
 
