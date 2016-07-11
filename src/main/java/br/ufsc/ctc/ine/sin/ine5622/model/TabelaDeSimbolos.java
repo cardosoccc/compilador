@@ -43,18 +43,29 @@ public class TabelaDeSimbolos {
 		return this.deslocamento;
 	}
 
-
 	public int getNivelAtual() {
 		return nivelAtual;
 	}
 
 
 	public Identificador getIdentificador(String idName) {
+		return getIdentificador(idName, this.nivelAtual);
+	}
+
+	public Identificador getIdentificador(String idName, int nivel) {
 		Identificador id = null;
-		if (identificadoresPorNivel.containsKey(this.nivelAtual)) {
-			id = identificadoresPorNivel.get(this.nivelAtual).get(idName);
+		if (identificadoresPorNivel.containsKey(nivel)) {
+			id = identificadoresPorNivel.get(nivel).get(idName);
 		}
 		return id;
+	}
+
+	public Map<Integer, Map<String, Identificador>> getIdentificadoresPorNivel() {
+		return identificadoresPorNivel;
+	}
+
+	public void limparNivelAtual() {
+		this.identificadoresPorNivel.remove(this.nivelAtual);
 	}
 
 }

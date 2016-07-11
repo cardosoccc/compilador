@@ -26,6 +26,7 @@ public class Semantico implements Constants {
 			actionMethod.invoke(this, token);
 		} catch (InvocationTargetException e) {
 			Throwable t = e.getTargetException();
+//			e.printStackTrace();
 			if (t instanceof SemanticError) {
 				throw new SemanticError("#" + action + ": " + t.getMessage(), token.getPosition());
 			}
@@ -113,7 +114,7 @@ public class Semantico implements Constants {
 		if (this.contextoSemantico.getTipoAtual().equals("cadeia")) {
 			throw new SemanticError("Vetor do tipo cadeia não é permitido", token.getPosition());
 		} else {
-			this.contextoSemantico.setSubcategoria("vetor");
+			this.contextoSemantico.setSubCategoria("vetor");
 		}
 	}
 
@@ -128,9 +129,9 @@ public class Semantico implements Constants {
 
 	public void action112(Token token) throws SemanticError {
 		if (this.contextoSemantico.getTipoAtual().equals("cadeia")) {
-			this.contextoSemantico.setSubcategoria("cadeia");
+			this.contextoSemantico.setSubCategoria("cadeia");
 		} else {
-			this.contextoSemantico.setSubcategoria("pre-definido");
+			this.contextoSemantico.setSubCategoria("pre-definido");
 		}
 	}
 
@@ -187,47 +188,75 @@ public class Semantico implements Constants {
 	}
 
 	public void action117(Token token) throws SemanticError {
-		// TODO
+		Identificador id = this.tabelaDeSimbolos.getIdentificador(token.getLexeme());
+		if (id != null) {
+			throw new SemanticError("Id já declarado", token.getPosition());
+		} else {
+			IdMetodo idMetodo = new IdMetodo(token.getLexeme());
+			this.tabelaDeSimbolos.incluirIdentificador(idMetodo);
+			this.tabelaDeSimbolos.setNivelAtual(this.tabelaDeSimbolos.getNivelAtual() + 1);
+			this.contextoSemantico.setNumParametrosFormais(0);
+			this.contextoSemantico.setIdMetodoAtual(idMetodo);
+		}
 	}
 
 	public void action118(Token token) throws SemanticError {
-		// TODO
+		this.contextoSemantico.setNumParametrosFormais(this.contextoSemantico.getNumParametrosFormais() + 1);
 	}
 
 	public void action119(Token token) throws SemanticError {
-		// TODO
+		this.contextoSemantico.getIdMetodoAtual().setTipo(this.contextoSemantico.getTipoMetodo());
 	}
 
 	public void action120(Token token) throws SemanticError {
-		// TODO
+		this.tabelaDeSimbolos.limparNivelAtual();
+		this.tabelaDeSimbolos.setNivelAtual(this.tabelaDeSimbolos.getNivelAtual() - 1);
 	}
 
 	public void action121(Token token) throws SemanticError {
-		// TODO
+		this.contextoSemantico.setContextoLID("par-formal");
+		this.contextoSemantico.setPrimeiraPosicaoListaDeclaracao(this.tabelaDeSimbolos.getDeslocamento());
+		this.contextoSemantico.inicializaListaDeclaracao();
 	}
 
 	public void action122(Token token) throws SemanticError {
-		// TODO
+		this.contextoSemantico.setUltimaPosicaoListaDeclaracao(this.tabelaDeSimbolos.getDeslocamento());
 	}
 
 	public void action123(Token token) throws SemanticError {
-		// TODO
+		if (!this.contextoSemantico.getSubCategoria().equals("pre-definido")) {
+			throw new SemanticError("Parametros devem ser de tipo pre-definido", token.getPosition());
+		} else {
+			List<Identificador> listaDeclaracao = this.contextoSemantico.getListaDeclaracao();
+			for (Identificador id : listaDeclaracao) {
+				IdParametro idParametro = new IdParametro(id);
+				idParametro.setTipo(this.contextoSemantico.getTipoAtual());
+				idParametro.setMpp(this.contextoSemantico.getMpp());
+				IdMetodo idMetodo = this.contextoSemantico.getIdMetodoAtual();
+				idMetodo.incluirParametro(idParametro);
+				this.tabelaDeSimbolos.incluirIdentificador(idParametro);
+			}
+		}
 	}
 
 	public void action124(Token token) throws SemanticError {
-		// TODO
+		if (this.contextoSemantico.getTipoAtual().equals("cadeia")) {
+			throw new SemanticError("Métodos devem ser de tipo pre-definido", token.getPosition());
+		} else {
+			this.contextoSemantico.setTipoMetodo(this.contextoSemantico.getTipoAtual());
+		}
 	}
 
 	public void action125(Token token) throws SemanticError {
-		// TODO
+		this.contextoSemantico.setTipoMetodo("nulo");
 	}
 
 	public void action126(Token token) throws SemanticError {
-		// TODO
+		this.contextoSemantico.setMpp("referencia");
 	}
 
 	public void action127(Token token) throws SemanticError {
-		// TODO
+		this.contextoSemantico.setMpp("valor");
 	}
 
 	public void action128(Token token) throws SemanticError {
@@ -457,8 +486,6 @@ public class Semantico implements Constants {
 		} else {
 			this.contextoSemantico.setTipoConst("caracter");
 		}
-		System.out.println(token.getLexeme());
-		System.out.println(this.contextoSemantico.getTipoConst());
 		this.contextoSemantico.setValConst(token.getLexeme());
 	}
 

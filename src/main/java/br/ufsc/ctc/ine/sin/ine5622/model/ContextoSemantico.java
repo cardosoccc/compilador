@@ -16,6 +16,9 @@ public class ContextoSemantico {
 	private String valConst;
 	private int numElementos;
 	private int numParametrosFormais;
+	private IdMetodo idMetodoAtual;
+	private String mpp;
+	private String tipoMetodo;
 
 	public String getContextoLID() {
 		return contextoLID;
@@ -38,7 +41,7 @@ public class ContextoSemantico {
 
 	}
 
-	public void setSubcategoria(String subCategoria) {
+	public void setSubCategoria(String subCategoria) {
 		this.subCategoria = subCategoria;
 	}
 
@@ -109,6 +112,32 @@ public class ContextoSemantico {
 
 	public void incrementaNumParametrosFormais() {
 		this.numParametrosFormais += 1;
+
+	}
+
+	public IdMetodo getIdMetodoAtual() {
+		return idMetodoAtual;
+	}
+
+	public void setIdMetodoAtual(IdMetodo idMetodo) {
+		this.idMetodoAtual = idMetodo;
+
+	}
+
+	public String getMpp() {
+		return this.mpp;
+	}
+
+	public void setMpp(String mpp) {
+		this.mpp = mpp;
+	}
+
+	public String getTipoMetodo() {
+		return tipoMetodo;
+	}
+
+	public void setTipoMetodo(String tipoMetodo) {
+		this.tipoMetodo = tipoMetodo;
 
 	}
 
