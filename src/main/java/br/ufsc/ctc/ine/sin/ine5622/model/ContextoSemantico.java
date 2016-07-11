@@ -19,6 +19,11 @@ public class ContextoSemantico {
 	private IdMetodo idMetodoAtual;
 	private Mpp mpp;
 	private Tipo tipoMetodo;
+	private Identificador idAtual;
+	private Tipo tipoExpr;
+	private Tipo tipoLadoEsq;
+	private ContextoEXPR contextoEXPR;
+	private SubCategoria subCategoriaVarIndexada;
 
 	public ContextoLID getContextoLID() {
 		return contextoLID;
@@ -139,6 +144,47 @@ public class ContextoSemantico {
 	public void setTipoMetodo(Tipo tipoMetodo) {
 		this.tipoMetodo = tipoMetodo;
 
+	}
+
+	public Identificador getIdAtual() {
+		return idAtual;
+	}
+
+	public void setIdAtual(Identificador id) {
+		this.idAtual = id;
+
+	}
+
+	public Tipo getTipoExpr() {
+		return tipoExpr;
+	}
+
+	public void setTipoExpr(Tipo tipoExpr) {
+		this.tipoExpr = tipoExpr;
+	}
+
+	public ContextoEXPR getContextoEXPR() {
+		return contextoEXPR;
+	}
+
+	public void setContextoEXPR(ContextoEXPR contextoEXPR) {
+		this.contextoEXPR = contextoEXPR;
+	}
+
+	public Tipo getTipoLadoEsq() {
+		return tipoLadoEsq;
+	}
+
+	public void setTipoLadoEsq(Tipo tipoLadoEsq) {
+		this.tipoLadoEsq = tipoLadoEsq;
+	}
+
+	public SubCategoria getSubCategoriaVarIndexada() {
+		return subCategoriaVarIndexada;
+	}
+
+	public void setSubCategoriaVarIndexada(SubCategoria subCategoriaVarIndexada) {
+		this.subCategoriaVarIndexada = subCategoriaVarIndexada;
 	}
 
 }

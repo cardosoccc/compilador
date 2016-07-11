@@ -23,6 +23,7 @@ public class Semantico implements Constants {
     {
 		try {
 			Method actionMethod = this.getClass().getMethod(ACTION_METHOD_PREFIX + action, Token.class);
+			this.geradorCodigoAcionado = true;
 			actionMethod.invoke(this, token);
 		} catch (InvocationTargetException e) {
 			Throwable t = e.getTargetException();
@@ -260,43 +261,98 @@ public class Semantico implements Constants {
 	}
 
 	public void action128(Token token) throws SemanticError {
-		// TODO
+		Identificador id = this.tabelaDeSimbolos.getIdentificador(token.getLexeme());
+		if (id == null) {
+			throw new SemanticError("Identificador não declarado", token.getPosition());
+		} else {
+			this.contextoSemantico.setIdAtual(id);
+		}
 	}
 
 	public void action129(Token token) throws SemanticError {
-		// TODO
+		Tipo tipoExpr = this.contextoSemantico.getTipoExpr();
+		if (tipoExpr != Tipo.BOOLEANO && tipoExpr == Tipo.INTEIRO) {
+			throw new SemanticError("Tipo inválido de expressão", token.getPosition());
+		} else {
+			this.geradorCodigoAcionado = true;
+		}
 	}
 
 	public void action130(Token token) throws SemanticError {
-		// TODO
+		this.contextoSemantico.setContextoLID(ContextoLID.LEITURA);
 	}
 
 	public void action131(Token token) throws SemanticError {
-		// TODO
+		this.contextoSemantico.setContextoEXPR(ContextoEXPR.IMPRESSAO);
 	}
 
 	public void action132(Token token) throws SemanticError {
-		// TODO
+		IdMetodo idMetodoAtual = this.contextoSemantico.getIdMetodoAtual();
+		if (idMetodoAtual.getTipo() == Tipo.NULO) {
+			throw new SemanticError("'Retorne' só pode ser usado em Método com tipo", token.getPosition());
+		} else if (this.contextoSemantico.getTipoExpr() != idMetodoAtual.getTipo()) {
+			throw new SemanticError("Tipo de retorno inválido", token.getPosition());
+		} else {
+			this.geradorCodigoAcionado = true;
+		}
 	}
 
 	public void action133(Token token) throws SemanticError {
-		// TODO
+		Identificador id = this.contextoSemantico.getIdAtual();
+		if (id instanceof IdVariavel || id instanceof IdParametro) {
+			IdComSubCategoria idSub = (IdComSubCategoria) id;
+			if (idSub.getSubCategoria() == SubCategoria.VETOR) {
+				throw new SemanticError("Id deveria ser indexado", token.getPosition());
+			} else {
+				this.contextoSemantico.setTipoLadoEsq(id.getTipo());
+			}
+		} else {
+			throw new SemanticError("Id deveria ser variável ou parâmetro", token.getPosition());
+		}
 	}
 
 	public void action134(Token token) throws SemanticError {
-		// TODO
+		if (!tiposCompativeis(this.contextoSemantico.getTipoLadoEsq(), this.contextoSemantico.getTipoExpr())) {
+			throw new SemanticError("Tipos incompatíveis", token.getPosition());
+		} else {
+			this.geradorCodigoAcionado = true;
+		}
 	}
 
+
 	public void action135(Token token) throws SemanticError {
-		// TODO
+		Identificador id = this.contextoSemantico.getIdAtual();
+		if (!(id instanceof IdVariavel)) {
+			throw new SemanticError("Esperava-se uma variável", token.getPosition());
+		} else {
+			IdComSubCategoria idSub = (IdComSubCategoria) id;
+			SubCategoria subCategoria = idSub.getSubCategoria();
+			if (subCategoria != SubCategoria.VETOR && subCategoria != SubCategoria.CADEIA) {
+				throw new SemanticError("Apenas vetores e cadeias podem ser indexados", token.getPosition());
+			} else {
+				this.contextoSemantico.setSubCategoriaVarIndexada(subCategoria);
+			}
+		}
 	}
 
 	public void action136(Token token) throws SemanticError {
-		// TODO
+		if (this.contextoSemantico.getTipoExpr() != Tipo.INTEIRO) {
+			throw new SemanticError("Ìndice deveria ser inteiro", token.getPosition());
+		} else if (this.contextoSemantico.getSubCategoriaVarIndexada() == SubCategoria.CADEIA) {
+			this.contextoSemantico.setTipoLadoEsq(Tipo.CARACTER);
+		} else {
+			Identificador id = this.contextoSemantico.getIdAtual();
+			this.contextoSemantico.setTipoLadoEsq(id.getTipo());
+		}
 	}
 
 	public void action137(Token token) throws SemanticError {
-		// TODO
+		Identificador id = this.contextoSemantico.getIdAtual();
+		if (!(id instanceof IdMetodo)) {
+			throw new SemanticError("Id deveria ser um método", token.getPosition());
+		} else if (id.getTipo() != Tipo.NULO) {
+			throw new SemanticError("Esperava-se método sem tipo", token.getPosition());
+		}
 	}
 
 	public void action138(Token token) throws SemanticError {
@@ -524,6 +580,18 @@ public class Semantico implements Constants {
 
 	private boolean tipoPreDefinido(Tipo tipo) {
 		return tipo == Tipo.BOOLEANO || tipo == Tipo.CARACTER || tipo == Tipo.INTEIRO || tipo == Tipo.REAL;
+	}
+
+	private boolean tiposCompativeis(Tipo tipoLadoEsq, Tipo tipoExpr) {
+		if (tipoLadoEsq == tipoExpr) {
+			return true;
+		} else if (tipoLadoEsq == Tipo.REAL && tipoExpr == Tipo.INTEIRO) {
+			return true;
+		} else if (tipoLadoEsq == Tipo.CADEIA && tipoExpr == Tipo.CARACTER) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }
