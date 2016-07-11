@@ -2,10 +2,10 @@ package br.ufsc.ctc.ine.sin.ine5622.model;
 
 public interface IdComSubCategoria {
 
-	String getSubCategoria();
-	void setSubCategoria(String subCategoria);
+	SubCategoria getSubCategoria();
+	void setSubCategoria(SubCategoria subCategoria);
 
-	String getTipo();
-	void setTipo(String tipo);
+	Tipo getTipo();
+	void setTipo(Tipo tipo);
 
 }

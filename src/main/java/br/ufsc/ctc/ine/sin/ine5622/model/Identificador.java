@@ -6,7 +6,7 @@ public class Identificador {
 	private int nivel;
 	private int deslocamento;
 	private int tamanho;
-	private String tipo;
+	private Tipo tipo;
 
 	public Identificador(String nome) {
 		this.nome = nome;
@@ -45,11 +45,11 @@ public class Identificador {
 		this.tamanho = tamanho;
 	}
 
-	public void setTipo(String tipo) {
+	public void setTipo(Tipo tipo) {
 		this.tipo = tipo;
 	}
 
-	public String getTipo() {
+	public Tipo getTipo() {
 		return tipo;
 	}
 

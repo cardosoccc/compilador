@@ -2,7 +2,7 @@ package br.ufsc.ctc.ine.sin.ine5622.model;
 
 public class IdParametro extends Identificador {
 
-	private String mpp;
+	private Mpp mpp;
 
 	public IdParametro(String nome) {
 		super(nome);
@@ -14,11 +14,11 @@ public class IdParametro extends Identificador {
 		this.setNivel(id.getNivel());
 	}
 
-	public String getMpp() {
+	public Mpp getMpp() {
 		return mpp;
 	}
 
-	public void setMpp(String mpp) {
+	public void setMpp(Mpp mpp) {
 		this.mpp = mpp;
 	}
 

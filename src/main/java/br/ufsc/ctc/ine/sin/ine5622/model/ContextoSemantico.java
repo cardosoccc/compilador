@@ -5,43 +5,47 @@ import java.util.List;
 
 public class ContextoSemantico {
 
-	private String contextoLID;
-	private String tipoAtual;
-	private String categoriaAtual;
-	private String subCategoria;
+	private ContextoLID contextoLID;
+	private Tipo tipoAtual;
+	private Categoria categoriaAtual;
+	private SubCategoria subCategoria;
 	private ArrayList<Identificador> listaDeclaracao;
 	private int primeiraPosicaoListaDeclaracao;
 	private int ultimaPosicaoListaDeclaracao;
-	private String tipoConst;
+	private Tipo tipoConst;
 	private String valConst;
 	private int numElementos;
 	private int numParametrosFormais;
 	private IdMetodo idMetodoAtual;
-	private String mpp;
-	private String tipoMetodo;
+	private Mpp mpp;
+	private Tipo tipoMetodo;
 
-	public String getContextoLID() {
+	public ContextoLID getContextoLID() {
 		return contextoLID;
 	}
 
-	public void setContextoLID(String contextoLID) {
+	public void setContextoLID(ContextoLID contextoLID) {
 		this.contextoLID = contextoLID;
 	}
 
-	public String getTipoAtual() {
+	public Tipo getTipoAtual() {
 		return tipoAtual;
 	}
 
-	public void setTipoAtual(String tipoAtual) {
+	public void setTipoAtual(Tipo tipoAtual) {
 		this.tipoAtual = tipoAtual;
 	}
 
-	public void setCategoriaAtual(String categoriaAtual) {
+	public Categoria getCategoriaAtual() {
+		return this.categoriaAtual;
+	}
+
+	public void setCategoriaAtual(Categoria categoriaAtual) {
 		this.categoriaAtual = categoriaAtual;
 
 	}
 
-	public void setSubCategoria(String subCategoria) {
+	public void setSubCategoria(SubCategoria subCategoria) {
 		this.subCategoria = subCategoria;
 	}
 
@@ -70,15 +74,11 @@ public class ContextoSemantico {
 		return this.ultimaPosicaoListaDeclaracao;
 	}
 
-	public String getCategoriaAtual() {
-		return this.categoriaAtual;
-	}
-
-	public String getTipoConst() {
+	public Tipo getTipoConst() {
 		return this.tipoConst;
 	}
 
-	public void setTipoConst(String tipoConst) {
+	public void setTipoConst(Tipo tipoConst) {
 		this.tipoConst = tipoConst;
 	}
 
@@ -94,7 +94,7 @@ public class ContextoSemantico {
 		this.numElementos = numElements;
 	}
 
-	public String getSubCategoria() {
+	public SubCategoria getSubCategoria() {
 		return this.subCategoria;
 	}
 
@@ -124,19 +124,19 @@ public class ContextoSemantico {
 
 	}
 
-	public String getMpp() {
+	public Mpp getMpp() {
 		return this.mpp;
 	}
 
-	public void setMpp(String mpp) {
+	public void setMpp(Mpp mpp) {
 		this.mpp = mpp;
 	}
 
-	public String getTipoMetodo() {
+	public Tipo getTipoMetodo() {
 		return tipoMetodo;
 	}
 
-	public void setTipoMetodo(String tipoMetodo) {
+	public void setTipoMetodo(Tipo tipoMetodo) {
 		this.tipoMetodo = tipoMetodo;
 
 	}

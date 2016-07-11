@@ -2,7 +2,7 @@ package br.ufsc.ctc.ine.sin.ine5622.model;
 
 public class IdVariavel extends Identificador implements IdComSubCategoria {
 
-	private String subCategoria;
+	private SubCategoria subCategoria;
 
 	public IdVariavel(String nome) {
 		super(nome);
@@ -14,11 +14,11 @@ public class IdVariavel extends Identificador implements IdComSubCategoria {
 		this.setNivel(id.getNivel());
 	}
 
-	public String getSubCategoria() {
+	public SubCategoria getSubCategoria() {
 		return subCategoria;
 	}
 
-	public void setSubCategoria(String subCategoria) {
+	public void setSubCategoria(SubCategoria subCategoria) {
 		this.subCategoria = subCategoria;
 	}
 

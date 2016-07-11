@@ -62,7 +62,7 @@ public class SemanticoTest {
 	@Test
 	public void action102DeveSetarContextoParaDecl() throws Exception {
 		semantico.executeAction(102, token());
-		assertEquals("decl", contexto.getContextoLID());
+		assertEquals(ContextoLID.DECL, contexto.getContextoLID());
 	}
 
 	@Test
@@ -92,7 +92,7 @@ public class SemanticoTest {
 	@Test
 	public void action104DeveIncluirIdNaTabela() throws Exception {
 		Token token = token();
-		Identificador idAntes = declararIdentificador("variavel", token);
+		Identificador idAntes = declararIdentificador(Categoria.VARIAVEL, token);
 
 		semantico.executeAction(104, token);
 
@@ -105,7 +105,7 @@ public class SemanticoTest {
 	@Test
 	public void action104DeveAlterarCategoriaDoIdParaVariavelQuandoForOCaso() throws Exception {
 		Token token = token();
-		Identificador idAntes = declararIdentificador("variavel", token);
+		Identificador idAntes = declararIdentificador(Categoria.VARIAVEL, token);
 
 		semantico.executeAction(104, token());
 
@@ -117,7 +117,7 @@ public class SemanticoTest {
 	@Test
 	public void action104DeveAlterarCategoriaDoIdParaContanteQuandoForOCaso() throws Exception {
 		Token token = token();
-		Identificador idAntes = declararIdentificador("constante", token);
+		Identificador idAntes = declararIdentificador(Categoria.CONSTANTE, token);
 
 		semantico.executeAction(104, token());
 
@@ -131,7 +131,7 @@ public class SemanticoTest {
 	@Test
 	public void action104DeveAtribuirValorParaIdCategoriaConstante() throws Exception {
 		Token token = token();
-		Identificador idAntes = declararIdentificador("constante", token);
+		Identificador idAntes = declararIdentificador(Categoria.CONSTANTE, token);
 
 		semantico.executeAction(104, token());
 
@@ -143,8 +143,8 @@ public class SemanticoTest {
 	@Test
 	public void action104DeveAtribuirTipoCorretoParaIdDeclarados() throws Exception {
 		Token token = token();
-		Identificador idAntes = declararIdentificador("variavel", token);
-		String tipoAtual = "inteiro";
+		Identificador idAntes = declararIdentificador(Categoria.VARIAVEL, token);
+		Tipo tipoAtual = Tipo.INTEIRO;
 		contexto.setTipoAtual(tipoAtual);
 
 		semantico.executeAction(104, token());
@@ -157,9 +157,9 @@ public class SemanticoTest {
 	@Test
 	public void action104DeveIncrementarUmaUnidadeDeDeslocamentoQuandoNaoForVetor() throws Exception {
 		Token token = token();
-		Identificador idAntes = declararIdentificador("variavel", token);
-		String subCategoria = "pre-definido";
-		String tipoAtual = "inteiro";
+		Identificador idAntes = declararIdentificador(Categoria.VARIAVEL, token);
+		SubCategoria subCategoria = SubCategoria.PREDEFINIDO;
+		Tipo tipoAtual = Tipo.INTEIRO;
 		contexto.setTipoAtual(tipoAtual);
 		contexto.setSubCategoria(subCategoria);
 
@@ -174,9 +174,9 @@ public class SemanticoTest {
 	@Test
 	public void action104DeveIncrementarDeslocamentoDeAcordoQuandoForVetor() throws Exception {
 		Token token = token();
-		Identificador idAntes = declararIdentificador("variavel", token);
-		String subCategoria = "vetor";
-		String tipoAtual = "inteiro";
+		Identificador idAntes = declararIdentificador(Categoria.VARIAVEL, token);
+		SubCategoria subCategoria = SubCategoria.VETOR;
+		Tipo tipoAtual = Tipo.INTEIRO;
 		contexto.setTipoAtual(tipoAtual);
 		contexto.setSubCategoria(subCategoria);
 		contexto.setValConst("5");
@@ -193,73 +193,73 @@ public class SemanticoTest {
 	@Test
 	public void action105DeveAlterarTipoAtualParaInteiro() throws Exception {
 		semantico.executeAction(105, token());
-		assertEquals("inteiro", contexto.getTipoAtual());
+		assertEquals(Tipo.INTEIRO, contexto.getTipoAtual());
 	}
 
 	@Test
 	public void action106DeveAlterarTipoAtualParaReal() throws Exception {
 		semantico.executeAction(106, token());
-		assertEquals("real", contexto.getTipoAtual());
+		assertEquals(Tipo.REAL, contexto.getTipoAtual());
 	}
 
 	@Test
 	public void action107DeveAlterarTipoAtualParaBooleano() throws Exception {
 		semantico.executeAction(107, token());
-		assertEquals("booleano", contexto.getTipoAtual());
+		assertEquals(Tipo.BOOLEANO, contexto.getTipoAtual());
 	}
 
 	@Test
 	public void action108DeveAlterarTipoAtualParaCaracter() throws Exception {
 		semantico.executeAction(108, token());
-		assertEquals("caracter", contexto.getTipoAtual());
+		assertEquals(Tipo.CARACTER, contexto.getTipoAtual());
 	}
 
 	@Test(expected=SemanticError.class)
 	public void action109DeveLancarExcecaoCasoTipoConstNaoSejaInteiro() throws Exception {
-		contexto.setTipoConst("booleano");
+		contexto.setTipoConst(Tipo.BOOLEANO);
 		semantico.executeAction(109, token());
 	}
 
 	@Test(expected=SemanticError.class)
 	public void action109DeveLancarExcecaoCasoTipoConstSejaInteiroEValConstMaiorQue256() throws Exception {
-		contexto.setTipoConst("inteiro");
+		contexto.setTipoConst(Tipo.INTEIRO);
 		contexto.setValConst("257");
 		semantico.executeAction(109, token());
 	}
 
 	public void action109DeveAlterarTipoAtualParaCadeiaCasoTipoConstSejaInteiroEValConstMenorOuIgual256() throws Exception {
-		contexto.setTipoConst("inteiro");
+		contexto.setTipoConst(Tipo.INTEIRO);
 		contexto.setValConst("256");
 
 		semantico.executeAction(109, token());
 
-		assertEquals("cadeia", contexto.getTipoAtual());
+		assertEquals(Tipo.CADEIA, contexto.getTipoAtual());
 	}
 
 	@Test(expected=SemanticError.class)
 	public void action110DeveLancarExcecaoCasoTipoAtualSejaCadeia() throws Exception {
-		contexto.setTipoAtual("cadeia");
+		contexto.setTipoAtual(Tipo.CADEIA);
 		semantico.executeAction(110, token());
 	}
 
 	@Test
 	public void action110DeveAtribuirSubCategoriaComoVetorCasoTipoAtualSejaDiferenteDeCadeia() throws Exception {
-		contexto.setTipoAtual("inteiro");
+		contexto.setTipoAtual(Tipo.INTEIRO);
 
 		semantico.executeAction(110, token());
 
-		assertEquals("vetor", contexto.getSubCategoria());
+		assertEquals(SubCategoria.VETOR, contexto.getSubCategoria());
 	}
 
 	@Test(expected=SemanticError.class)
 	public void action111DeveLancarExcecaoCasoTipoConstNaoSejaInteiro() throws Exception {
-		contexto.setTipoConst("cadeia");
+		contexto.setTipoConst(Tipo.CADEIA);
 		semantico.executeAction(111, token());
 	}
 
 	@Test
 	public void action111AlterarNumElementosParaValConst() throws Exception {
-		contexto.setTipoConst("inteiro");
+		contexto.setTipoConst(Tipo.INTEIRO);
 		String dimensao = "14";
 		contexto.setValConst(dimensao);
 
@@ -270,23 +270,23 @@ public class SemanticoTest {
 
 	@Test
 	public void action112DeveAlterarSubCategoriaParaCadeiaCasoTipoAtualSejaCadeia() throws Exception {
-		contexto.setTipoAtual("cadeia");
+		contexto.setTipoAtual(Tipo.CADEIA);
 		semantico.executeAction(112, token());
 
-		assertEquals("cadeia", contexto.getSubCategoria());
+		assertEquals(SubCategoria.CADEIA, contexto.getSubCategoria());
 	}
 
 	@Test
 	public void action112DeveAlterarSubCategoriaParaPreDefinidoCasoTipoAtualNaoSejaCadeia() throws Exception {
-		contexto.setTipoAtual("inteiro");
+		contexto.setTipoAtual(Tipo.INTEIRO);
 		semantico.executeAction(112, token());
 
-		assertEquals("pre-definido", contexto.getSubCategoria());
+		assertEquals(SubCategoria.PREDEFINIDO, contexto.getSubCategoria());
 	}
 
 	@Test(expected=SemanticError.class)
 	public void action113DeveLancarExcecaoCasoContextoLIDSejaDeclEIdJaDeclaradoNoNivelAtual() throws Exception {
-		contexto.setContextoLID("decl");
+		contexto.setContextoLID(ContextoLID.DECL);
 		Token token = token();
 		Identificador idExistente = new Identificador(token.getLexeme());
 		tabela.incluirIdentificador(idExistente);
@@ -297,7 +297,7 @@ public class SemanticoTest {
 
 	@Test
 	public void action113DeveInserirIdNaTabelaCasoContextoLIDSejaDeclEIdNaoDeclaradoNoNivelAtual() throws Exception {
-		contexto.setContextoLID("decl");
+		contexto.setContextoLID(ContextoLID.DECL);
 		Token token = token();
 		contexto.inicializaListaDeclaracao();
 
@@ -308,7 +308,7 @@ public class SemanticoTest {
 
 	@Test
 	public void action113DeveInserirIdNaListaDeDeclaracaoCasoContextoLIDSejaDeclEIdNaoDeclaradoNoNivelAtual() throws Exception {
-		contexto.setContextoLID("decl");
+		contexto.setContextoLID(ContextoLID.DECL);
 		Token token = token();
 		contexto.inicializaListaDeclaracao();
 
@@ -319,7 +319,7 @@ public class SemanticoTest {
 
 	@Test(expected=SemanticError.class)
 	public void action113DeveLancarExcecaoCasoContextoLIDSejaParFormalEIdJaDeclaradoNoNivelAtual() throws Exception {
-		contexto.setContextoLID("par-formal");
+		contexto.setContextoLID(ContextoLID.PAR_FORMAL);
 		Token token = token();
 		Identificador idExistente = new Identificador(token.getLexeme());
 		contexto.inicializaListaDeclaracao();
@@ -330,7 +330,7 @@ public class SemanticoTest {
 
 	@Test
 	public void action113DeveInserirIdNaTabelaCasoContextoLIDSejaParFormalEIdNaoDeclaradoNoNivelAtual() throws Exception {
-		contexto.setContextoLID("par-formal");
+		contexto.setContextoLID(ContextoLID.PAR_FORMAL);
 		contexto.inicializaListaDeclaracao();
 		Token token = token();
 
@@ -341,7 +341,7 @@ public class SemanticoTest {
 
 	@Test
 	public void action113DeveInserirIdNaListaDeDeclaracaoContextoLIDSejaParFormalEIdNaoDeclaradoNoNivelAtual() throws Exception {
-		contexto.setContextoLID("par-formal");
+		contexto.setContextoLID(ContextoLID.PAR_FORMAL);
 		contexto.inicializaListaDeclaracao();
 		Token token = token();
 
@@ -352,7 +352,7 @@ public class SemanticoTest {
 
 	@Test
 	public void action113DeveIncrementarNumParametrosFormaisCasoContextoLIDSejaParFormalEIdNaoDeclaradoNoNivelAtual() throws Exception {
-		contexto.setContextoLID("par-formal");
+		contexto.setContextoLID(ContextoLID.PAR_FORMAL);
 		contexto.inicializaListaDeclaracao();
 		Token token = token();
 
@@ -363,14 +363,14 @@ public class SemanticoTest {
 
 	@Test(expected=SemanticError.class)
 	public void action113DeveLancarExcecaoCasoContextoLIDSejaLeituraEIdNaoDeclarado() throws Exception {
-		contexto.setContextoLID("leitura");
+		contexto.setContextoLID(ContextoLID.LEITURA);
 		contexto.inicializaListaDeclaracao();
 		semantico.executeAction(113, token());
 	}
 
 	@Test(expected=SemanticError.class)
 	public void action113DeveLancarExcecaoCasoContextoLIDSejaLeituraComIdJaDeclaradoECategoriaConstanteInvalidaParaLeitura() throws Exception {
-		contexto.setContextoLID("leitura");
+		contexto.setContextoLID(ContextoLID.LEITURA);
 		Token token = token();
 		IdConstante id = new IdConstante(token.getLexeme());
 		contexto.inicializaListaDeclaracao();
@@ -381,7 +381,7 @@ public class SemanticoTest {
 
 	@Test(expected=SemanticError.class)
 	public void action113DeveLancarExcecaoCasoContextoLIDSejaLeituraComIdJaDeclaradoECategoriaProgramaInvalidaParaLeitura() throws Exception {
-		contexto.setContextoLID("leitura");
+		contexto.setContextoLID(ContextoLID.LEITURA);
 		Token token = token();
 		IdPrograma id = new IdPrograma(token.getLexeme());
 		contexto.inicializaListaDeclaracao();
@@ -392,7 +392,7 @@ public class SemanticoTest {
 
 	@Test(expected=SemanticError.class)
 	public void action113DeveLancarExcecaoCasoContextoLIDSejaLeituraComIdJaDeclaradoECategoriaMetodoInvalidaParaLeitura() throws Exception {
-		contexto.setContextoLID("leitura");
+		contexto.setContextoLID(ContextoLID.LEITURA);
 		Token token = token();
 		IdMetodo id = new IdMetodo(token.getLexeme());
 		contexto.inicializaListaDeclaracao();
@@ -403,11 +403,11 @@ public class SemanticoTest {
 
 	@Test(expected=SemanticError.class)
 	public void action113DeveLancarExcecaoCasoContextoLIDSejaLeituraComIdJaDeclaradoETipoBooleanoInvalidoParaLeitura() throws Exception {
-		contexto.setContextoLID("leitura");
+		contexto.setContextoLID(ContextoLID.LEITURA);
 		Token token = token();
 		IdVariavel id = new IdVariavel(token.getLexeme());
-		id.setSubCategoria("pre-definido");
-		id.setTipo("booleano");
+		id.setSubCategoria(SubCategoria.PREDEFINIDO);
+		id.setTipo(Tipo.BOOLEANO);
 		contexto.inicializaListaDeclaracao();
 		tabela.incluirIdentificador(id);
 
@@ -416,10 +416,10 @@ public class SemanticoTest {
 
 	@Test(expected=SemanticError.class)
 	public void action113DeveLancarExcecaoCasoContextoLIDSejaLeituraComIdJaDeclaradoESubcategoriaVetorInvalidaParaLeitura() throws Exception {
-		contexto.setContextoLID("leitura");
+		contexto.setContextoLID(ContextoLID.LEITURA);
 		Token token = token();
 		IdVariavel id = new IdVariavel(token.getLexeme());
-		id.setSubCategoria("vetor");
+		id.setSubCategoria(SubCategoria.VETOR);
 		contexto.inicializaListaDeclaracao();
 		tabela.incluirIdentificador(id);
 
@@ -428,11 +428,11 @@ public class SemanticoTest {
 
 	@Test
 	public void action113DeveGerarCodigoCasoContextoLIDSejaLeituraIdJaDeclaradoECategoriaETipoValidosParaLeitura() throws Exception {
-		contexto.setContextoLID("leitura");
+		contexto.setContextoLID(ContextoLID.LEITURA);
 		Token token = token();
 		IdVariavel id = new IdVariavel(token.getLexeme());
-		id.setSubCategoria("pre-definido");
-		id.setTipo("inteiro");
+		id.setSubCategoria(SubCategoria.PREDEFINIDO);
+		id.setTipo(Tipo.INTEIRO);
 		contexto.inicializaListaDeclaracao();
 		tabela.incluirIdentificador(id);
 
@@ -443,10 +443,10 @@ public class SemanticoTest {
 
 	@Test
 	public void action113DeveGerarCodigoCasoContextoLIDSejaLeituraIdJaDeclaradoESubCategoriaValidaParaLeitura() throws Exception {
-		contexto.setContextoLID("leitura");
+		contexto.setContextoLID(ContextoLID.LEITURA);
 		Token token = token();
 		IdVariavel id = new IdVariavel(token.getLexeme());
-		id.setSubCategoria("cadeia");
+		id.setSubCategoria(SubCategoria.CADEIA);
 		contexto.inicializaListaDeclaracao();
 		tabela.incluirIdentificador(id);
 
@@ -457,43 +457,43 @@ public class SemanticoTest {
 
 	@Test(expected=SemanticError.class)
 	public void action114DeveLancarExcecaoCasoSubCategoriaSejaCadeia() throws Exception {
-		contexto.setSubCategoria("cadeia");
+		contexto.setSubCategoria(SubCategoria.CADEIA);
 		semantico.executeAction(114, token());
 	}
 
 	@Test(expected=SemanticError.class)
 	public void action114DeveLancarExcecaoCasoSubCategoriaSejaVetor() throws Exception {
-		contexto.setSubCategoria("vetor");
+		contexto.setSubCategoria(SubCategoria.VETOR);
 		semantico.executeAction(114, token());
 	}
 
 	@Test
 	public void action114DeveAlterarCategoriaAtualParaConstanteCasoSubCategoriaSejaPreDefinido() throws Exception {
-		contexto.setSubCategoria("pre-definido");
+		contexto.setSubCategoria(SubCategoria.PREDEFINIDO);
 
 		semantico.executeAction(114, token());
 
-		assertEquals("constante", contexto.getCategoriaAtual());
+		assertEquals(Categoria.CONSTANTE, contexto.getCategoriaAtual());
 	}
 
 	@Test(expected=SemanticError.class)
 	public void action115DeveLancarExcecaoCasoTipoConstSejaDiferenteDeTipoAtual() throws Exception {
-		contexto.setTipoConst("inteiro");
-		contexto.setTipoAtual("real");
+		contexto.setTipoConst(Tipo.INTEIRO);
+		contexto.setTipoAtual(Tipo.REAL);
 		semantico.executeAction(115, token());
 	}
 
 	@Test
 	public void action115NaoDeveLancarExcecaoCasoTipoConstSejaIgualTipoAtual() throws Exception {
-		contexto.setTipoConst("inteiro");
-		contexto.setTipoAtual("inteiro");
+		contexto.setTipoConst(Tipo.INTEIRO);
+		contexto.setTipoAtual(Tipo.INTEIRO);
 		semantico.executeAction(115, token());
 	}
 
 	@Test
 	public void action116DeveAtribuirVariavelParaCategoriaAtual() throws Exception {
 		semantico.executeAction(116, token());
-		assertEquals("variavel", contexto.getCategoriaAtual());
+		assertEquals(Categoria.VARIAVEL, contexto.getCategoriaAtual());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -535,11 +535,11 @@ public class SemanticoTest {
 		Token token = token();
 		IdMetodo idMetodo = new IdMetodo(token.getLexeme());
 		contexto.setIdMetodoAtual(idMetodo);
-		contexto.setTipoMetodo("inteiro");
+		contexto.setTipoMetodo(Tipo.INTEIRO);
 
 		semantico.executeAction(119, token);
 
-		assertEquals("inteiro", idMetodo.getTipo());
+		assertEquals(Tipo.INTEIRO, idMetodo.getTipo());
 	}
 
 	@Test
@@ -567,7 +567,7 @@ public class SemanticoTest {
 	@Test
 	public void action121DeveAlterarContextLIDParaParFormal() throws Exception {
 		semantico.executeAction(121, token());
-		assertEquals("par-formal", contexto.getContextoLID());
+		assertEquals(ContextoLID.PAR_FORMAL, contexto.getContextoLID());
 	}
 
 	@Test
@@ -588,13 +588,13 @@ public class SemanticoTest {
 
 	@Test(expected=SemanticError.class)
 	public void action123DeveLancarExcecaoCasoTipoAtualSejaDiferenteDePreDefinido() throws Exception {
-		contexto.setSubCategoria("cadeia");
+		contexto.setTipoAtual(Tipo.CADEIA);
 		semantico.executeAction(123, token());
 	}
 
 	@Test
 	public void action123DeveAtualizarIdParaIdParametroCasoTipoAtualSejaPreDefinido() throws Exception {
-		contexto.setSubCategoria("pre-definido");
+		contexto.setTipoAtual(Tipo.INTEIRO);
 		contexto.inicializaListaDeclaracao();
 		Token token = token();
 		Identificador idAntes = new Identificador(token.getLexeme());
@@ -611,7 +611,7 @@ public class SemanticoTest {
 
 	@Test
 	public void action123DeveAtualizarMppDoIdParametroCasoTipoAtualSejaPreDefinido() throws Exception {
-		contexto.setSubCategoria("pre-definido");
+		contexto.setTipoAtual(Tipo.INTEIRO);
 		contexto.inicializaListaDeclaracao();
 		Token token = token();
 		Identificador idAntes = new Identificador(token.getLexeme());
@@ -619,17 +619,17 @@ public class SemanticoTest {
 		tabela.incluirIdentificador(idAntes);
 		IdMetodo idMetodo = new IdMetodo("metodo");
 		contexto.setIdMetodoAtual(idMetodo);
-		contexto.setMpp("valor");
+		contexto.setMpp(Mpp.VALOR);
 
 		semantico.executeAction(123, token);
 
 		IdParametro idDepois = (IdParametro)tabela.getIdentificador(token.getLexeme());
-		assertEquals("valor", idDepois.getMpp());
+		assertEquals(Mpp.VALOR, idDepois.getMpp());
 	}
 
 	@Test
 	public void action123DeveAtualizarTipoAtualDoIdParametroCasoTipoAtualSejaPreDefinido() throws Exception {
-		contexto.setSubCategoria("pre-definido");
+		contexto.setTipoAtual(Tipo.INTEIRO);
 		contexto.inicializaListaDeclaracao();
 		Token token = token();
 		Identificador idAntes = new Identificador(token.getLexeme());
@@ -637,17 +637,17 @@ public class SemanticoTest {
 		tabela.incluirIdentificador(idAntes);
 		IdMetodo idMetodo = new IdMetodo("metodo");
 		contexto.setIdMetodoAtual(idMetodo);
-		contexto.setTipoAtual("inteiro");
+		contexto.setTipoAtual(Tipo.INTEIRO);
 
 		semantico.executeAction(123, token);
 
 		Identificador idDepois = tabela.getIdentificador(token.getLexeme());
-		assertEquals("inteiro", idDepois.getTipo());
+		assertEquals(Tipo.INTEIRO, idDepois.getTipo());
 	}
 
 	@Test
 	public void action123DeveIncluirIdParametroNaListaDeParametrosDoIdMetodoAtualCasoTipoAtualSejaPreDefinido() throws Exception {
-		contexto.setSubCategoria("pre-definido");
+		contexto.setTipoAtual(Tipo.INTEIRO);
 		contexto.inicializaListaDeclaracao();
 		Token token = token();
 		Identificador idAntes = new Identificador(token.getLexeme());
@@ -664,35 +664,35 @@ public class SemanticoTest {
 
 	@Test(expected=SemanticError.class)
 	public void action124DeveLancarExcecaoCasoTipoAtualSejaCadeia() throws Exception {
-		contexto.setTipoAtual("cadeia");
+		contexto.setTipoAtual(Tipo.CADEIA);
 		semantico.executeAction(124, token());
 	}
 
 	@Test
 	public void action124DeveAlterarTipoDoMetodoParaTipoAtualCasoTipoAtualSejaDiferenteCadeia() throws Exception {
-		contexto.setTipoAtual("inteiro");
+		contexto.setTipoAtual(Tipo.INTEIRO);
 
 		semantico.executeAction(124, token());
 
-		assertEquals("inteiro", contexto.getTipoMetodo());
+		assertEquals(Tipo.INTEIRO, contexto.getTipoMetodo());
 	}
 
 	@Test
 	public void action125DeveAlterarTipoDoMetodoParaNulo() throws Exception {
 		semantico.executeAction(125, token());
-		assertEquals("nulo", contexto.getTipoMetodo());
+		assertEquals(Tipo.NULO, contexto.getTipoMetodo());
 	}
 
 	@Test
 	public void action126DeveAlterarMppParaReferencia() throws Exception {
 		semantico.executeAction(126, token());
-		assertEquals("referencia", contexto.getMpp());
+		assertEquals(Mpp.REFERENCIA, contexto.getMpp());
 	}
 
 	@Test
 	public void action127DeveAlterarMppParaValor() throws Exception {
 		semantico.executeAction(127, token());
-		assertEquals("valor", contexto.getMpp());
+		assertEquals(Mpp.VALOR, contexto.getMpp());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -717,12 +717,12 @@ public class SemanticoTest {
 		contexto.inicializaListaDeclaracao();
 
 		IdConstante id = new IdConstante(token.getLexeme());
-		id.setTipo("inteiro");
+		id.setTipo(Tipo.INTEIRO);
 		tabela.incluirIdentificador(id);
 
 		semantico.executeAction(175, token);
 
-		assertEquals("inteiro", contexto.getTipoConst());
+		assertEquals(Tipo.INTEIRO, contexto.getTipoConst());
 	}
 
 	@Test
@@ -743,7 +743,7 @@ public class SemanticoTest {
 	public void action176DeveAlterarTipoConstParaTipoDaConstanteInteiro() throws Exception {
 		String valor = "14";
 		semantico.executeAction(176, new Token(1, valor, 0));
-		assertEquals("inteiro", contexto.getTipoConst());
+		assertEquals(Tipo.INTEIRO, contexto.getTipoConst());
 	}
 
 	@Test
@@ -757,7 +757,7 @@ public class SemanticoTest {
 	public void action177DeveAlterarTipoConstParaTipoDaConstanteReal() throws Exception {
 		String valor = "14.4";
 		semantico.executeAction(177, new Token(1, valor, 0));
-		assertEquals("real", contexto.getTipoConst());
+		assertEquals(Tipo.REAL, contexto.getTipoConst());
 	}
 
 	@Test
@@ -771,7 +771,7 @@ public class SemanticoTest {
 	public void action178DeveAlterarTipoConstParaTipoDaConstanteBooleanoFalso() throws Exception {
 		String valor = "falso";
 		semantico.executeAction(178, new Token(1, valor, 0));
-		assertEquals("booleano", contexto.getTipoConst());
+		assertEquals(Tipo.BOOLEANO, contexto.getTipoConst());
 	}
 
 	@Test
@@ -785,7 +785,7 @@ public class SemanticoTest {
 	public void action179DeveAlterarTipoConstParaTipoDaConstanteBooleanoVerdadeiro() throws Exception {
 		String valor = "verdadeiro";
 		semantico.executeAction(179, new Token(1, valor, 0));
-		assertEquals("booleano", contexto.getTipoConst());
+		assertEquals(Tipo.BOOLEANO, contexto.getTipoConst());
 	}
 
 	@Test
@@ -799,7 +799,7 @@ public class SemanticoTest {
 	public void action180DeveAlterarTipoConstParaTipoDaConstanteCadeia() throws Exception {
 		String valor = "'abc'";
 		semantico.executeAction(180, new Token(1, valor, 0));
-		assertEquals("cadeia", contexto.getTipoConst());
+		assertEquals(Tipo.CADEIA, contexto.getTipoConst());
 	}
 
 	@Test
@@ -813,7 +813,7 @@ public class SemanticoTest {
 	public void action180DeveAlterarTipoConstParaTipoDaConstanteCaractere() throws Exception {
 		String valor = "'a'";
 		semantico.executeAction(180, new Token(1, valor, 0));
-		assertEquals("caracter", contexto.getTipoConst());
+		assertEquals(Tipo.CARACTER, contexto.getTipoConst());
 	}
 
 	@Test
@@ -827,10 +827,10 @@ public class SemanticoTest {
 		return new Token(1, "lexeme", 0);
 	}
 
-	private Identificador declararIdentificador(String categoriaAtual, Token token) {
+	private Identificador declararIdentificador(Categoria categoriaAtual, Token token) {
 		contexto.setCategoriaAtual(categoriaAtual);
 		contexto.inicializaListaDeclaracao();
-		contexto.setSubCategoria("");
+		contexto.setSubCategoria(SubCategoria.PREDEFINIDO);
 
 		List<Identificador> listaDeclaracao = contexto.getListaDeclaracao();
 		Identificador idAntes = new Identificador(token.getLexeme());
