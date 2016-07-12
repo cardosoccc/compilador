@@ -2,6 +2,7 @@ package br.ufsc.ctc.ine.sin.ine5622.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class ContextoSemantico {
 
@@ -24,6 +25,8 @@ public class ContextoSemantico {
 	private Tipo tipoLadoEsq;
 	private ContextoEXPR contextoEXPR;
 	private SubCategoria subCategoriaVarIndexada;
+	private Stack<ContextoMetodo> pilhaContextoMetodo;
+	private Tipo tipoVar;
 
 	public ContextoLID getContextoLID() {
 		return contextoLID;
@@ -117,7 +120,6 @@ public class ContextoSemantico {
 
 	public void incrementaNumParametrosFormais() {
 		this.numParametrosFormais += 1;
-
 	}
 
 	public IdMetodo getIdMetodoAtual() {
@@ -185,6 +187,26 @@ public class ContextoSemantico {
 
 	public void setSubCategoriaVarIndexada(SubCategoria subCategoriaVarIndexada) {
 		this.subCategoriaVarIndexada = subCategoriaVarIndexada;
+	}
+
+	public Tipo getTipoVar() {
+		return tipoVar;
+	}
+
+	public void setTipoVar(Tipo tipoVar) {
+		this.tipoVar = tipoVar;
+	}
+
+	public ContextoMetodo peekContextoMetodo() {
+		return this.pilhaContextoMetodo.peek();
+	}
+
+	public ContextoMetodo popContextoMetodo() {
+		return this.pilhaContextoMetodo.pop();
+	}
+
+	public void pushContextoMetodo(ContextoMetodo contextoMetodo) {
+		this.pilhaContextoMetodo.push(contextoMetodo);
 	}
 
 }

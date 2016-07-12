@@ -696,6 +696,288 @@ public class SemanticoTest {
 	}
 
 	@Test(expected=SemanticError.class)
+	public void action128DeveLancarExcecaoCasoIdNaoDeclarado() throws Exception {
+		semantico.executeAction(128, token());
+	}
+
+	@Test
+	public void action128DeveArmazenarIdAtual() throws Exception {
+		tabela.incluirIdentificador(new Identificador(token().getLexeme()));
+		semantico.executeAction(128, token());
+
+		Identificador id = tabela.getIdentificador(token().getLexeme());
+		assertNotNull(id);
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action129DeveLancarExcecaoCasoTipoExprSejaDiferenteDeBooleanoOuInteiro() throws Exception {
+		contexto.setTipoExpr(Tipo.REAL);
+		semantico.executeAction(129, token());
+	}
+
+	@Test
+	public void action129DeveGerarCodigoCasoTipoExprSejaBooleano() throws Exception {
+		contexto.setTipoExpr(Tipo.BOOLEANO);
+
+		semantico.executeAction(129, token());
+
+		assertTrue(semantico.isGeradorCodigoAcionado());
+	}
+
+	@Test
+	public void action129DeveGerarCodigoCasoTipoExprSejaInteiro() throws Exception {
+		contexto.setTipoExpr(Tipo.INTEIRO);
+
+		semantico.executeAction(129, token());
+
+		assertTrue(semantico.isGeradorCodigoAcionado());
+	}
+
+	@Test
+	public void action130DeveAlterarContextoLIDParaLeitura() throws Exception {
+		semantico.executeAction(130, token());
+		assertEquals(ContextoLID.LEITURA, contexto.getContextoLID());
+	}
+
+	@Test
+	public void action131DeveAlterarContextoEXPRParaImpressao() throws Exception {
+		semantico.executeAction(131, token());
+		assertEquals(ContextoEXPR.IMPRESSAO, contexto.getContextoEXPR());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action132DeveLancarExcecaoCasoMetodoAtualNaoTenhaTipo() throws Exception {
+		IdMetodo idMetodo = new IdMetodo(token().getLexeme());
+		idMetodo.setTipo(Tipo.NULO);
+		contexto.setIdMetodoAtual(idMetodo);
+
+		semantico.executeAction(132, token());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action132DeveLancarExcecaoCasoTipoExprSejaDiferenteDoTipoDoMetodoAtual() throws Exception {
+		IdMetodo idMetodo = new IdMetodo(token().getLexeme());
+		idMetodo.setTipo(Tipo.INTEIRO);
+		contexto.setIdMetodoAtual(idMetodo);
+		contexto.setTipoExpr(Tipo.BOOLEANO);
+
+		semantico.executeAction(132, token());
+	}
+
+	@Test
+	public void action132DeveGerarCodigoCasoTipoExprSejaIgualAoTipoDoMetodoAtual() throws Exception {
+		IdMetodo idMetodo = new IdMetodo(token().getLexeme());
+		idMetodo.setTipo(Tipo.INTEIRO);
+		contexto.setIdMetodoAtual(idMetodo);
+		contexto.setTipoExpr(Tipo.INTEIRO);
+
+		semantico.executeAction(132, token());
+
+		assertTrue(semantico.isGeradorCodigoAcionado());
+	}
+
+	@Test
+	public void action132DeveGerarCodigoCasoTipoExprSejaCompativelComTipoRealDoMetodoAtual() throws Exception {
+		IdMetodo idMetodo = new IdMetodo(token().getLexeme());
+		idMetodo.setTipo(Tipo.REAL);
+		contexto.setIdMetodoAtual(idMetodo);
+		contexto.setTipoExpr(Tipo.INTEIRO);
+
+		semantico.executeAction(132, token());
+
+		assertTrue(semantico.isGeradorCodigoAcionado());
+	}
+
+	@Test
+	public void action132DeveGerarCodigoCasoTipoExprSejaCompativelComTipoCadeiaDoMetodoAtual() throws Exception {
+		IdMetodo idMetodo = new IdMetodo(token().getLexeme());
+		idMetodo.setTipo(Tipo.CADEIA);
+		contexto.setIdMetodoAtual(idMetodo);
+		contexto.setTipoExpr(Tipo.CARACTER);
+
+		semantico.executeAction(132, token());
+
+		assertTrue(semantico.isGeradorCodigoAcionado());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action133DeveLancarExcecaoCasoIdNaoSejaVariavelNemParametro() throws Exception {
+		IdConstante id = new IdConstante(token().getLexeme());
+		contexto.setIdAtual(id);
+
+		semantico.executeAction(133, token());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action133DeveLancarExcecaoCasoIdSejaVariavelESubCategoriaSejaVetor() throws Exception {
+		IdVariavel id = new IdVariavel(token().getLexeme());
+		id.setSubCategoria(SubCategoria.VETOR);
+		contexto.setIdAtual(id);
+
+		semantico.executeAction(133, token());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action133DeveLancarExcecaoCasoIdSejaParametroESubCategoriaSejaVetor() throws Exception {
+		IdParametro id = new IdParametro(token().getLexeme());
+		id.setSubCategoria(SubCategoria.VETOR);
+		contexto.setIdAtual(id);
+
+		semantico.executeAction(133, token());
+	}
+
+	@Test
+	public void action133DeveAlterarTipoLadEsqParaTipoDoIdCasoIdSejaVariavelESubCategoriaNaoSejaVetor() throws Exception {
+		IdVariavel id = new IdVariavel(token().getLexeme());
+		id.setTipo(Tipo.INTEIRO);
+		contexto.setIdAtual(id);
+
+		semantico.executeAction(133, token());
+
+		assertEquals(Tipo.INTEIRO, contexto.getTipoLadoEsq());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action134DeveLancarExcecaoCasoTipoExprSejaIncompativelComTipoLadoEsq() throws Exception {
+		contexto.setTipoExpr(Tipo.BOOLEANO);
+		contexto.setTipoLadoEsq(Tipo.INTEIRO);
+
+		semantico.executeAction(134, token());
+	}
+
+	@Test
+	public void action134DeveGerarCodigoCasoTipoExprSejaCompativelComTipoLadoEsq() throws Exception {
+		contexto.setTipoExpr(Tipo.INTEIRO);
+		contexto.setTipoLadoEsq(Tipo.REAL);
+
+		semantico.executeAction(134, token());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action135DeveLancarExcecaoCasoIdAtualNaoSejaVariavel() throws Exception {
+		IdConstante id = new IdConstante(token().getLexeme());
+		contexto.setIdAtual(id);
+
+		semantico.executeAction(135, token());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action135DeveLancarExcecaoCasoIdAtualSejaVariavelESubCategoriaNaoSejaCadeiaNemVetor() throws Exception {
+		IdVariavel id = new IdVariavel(token().getLexeme());
+		id.setSubCategoria(SubCategoria.PREDEFINIDO);
+		contexto.setIdAtual(id);
+
+		semantico.executeAction(135, token());
+	}
+
+	@Test
+	public void action135DeveAlterarSubCategoriaVarIndexadaParaSubCategoriaDoIdCasoIdAtualSejaVariavelESubCategoriaSejaCadeia() throws Exception {
+		IdVariavel id = new IdVariavel(token().getLexeme());
+		id.setSubCategoria(SubCategoria.CADEIA);
+		contexto.setIdAtual(id);
+
+		semantico.executeAction(135, token());
+
+		assertEquals(SubCategoria.CADEIA, contexto.getSubCategoriaVarIndexada());
+	}
+
+	@Test
+	public void action135DeveAlterarSubCategoriaVarIndexadaParaSubCategoriaDoIdCasoIdAtualSejaVariavelESubCategoriaSejaVetor() throws Exception {
+		IdVariavel id = new IdVariavel(token().getLexeme());
+		id.setSubCategoria(SubCategoria.VETOR);
+		contexto.setIdAtual(id);
+
+		semantico.executeAction(135, token());
+
+		assertEquals(SubCategoria.VETOR, contexto.getSubCategoriaVarIndexada());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action136DeveLancarExcecaoCasoTipoExprSejaDiferenteDeInteiro() throws Exception {
+		contexto.setTipoExpr(Tipo.BOOLEANO);
+		semantico.executeAction(136, token());
+	}
+
+	@Test
+	public void action136DeveAlterarTipoLadoEsqParaCaracterCasoTipoExprSejaInteiroESubCategoriaVarIndexadaSejaCadeia() throws Exception {
+		contexto.setTipoExpr(Tipo.INTEIRO);
+		contexto.setSubCategoriaVarIndexada(SubCategoria.CADEIA);
+
+		semantico.executeAction(136, token());
+
+		assertEquals(Tipo.CARACTER, contexto.getTipoLadoEsq());
+	}
+
+	@Test
+	public void action136DeveAlterarTipoLadoEsqParaTipoDoVetorCasoTipoExprSejaInteiroESubCategoriaVarIndexadaSejaVetor() throws Exception {
+		Identificador id = new Identificador(token().getLexeme());
+		id.setTipo(Tipo.BOOLEANO);
+		contexto.setIdAtual(id);
+		contexto.setTipoExpr(Tipo.INTEIRO);
+		contexto.setSubCategoriaVarIndexada(SubCategoria.VETOR);
+
+		semantico.executeAction(136, token());
+
+		assertEquals(Tipo.BOOLEANO, contexto.getTipoLadoEsq());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action137DeveLancarExcecaoCasoCategoriaDoIdNaoSejaMetodo() throws Exception {
+		contexto.setIdAtual(new IdVariavel(token().getLexeme()));
+		semantico.executeAction(137, token());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action137DeveLancarExcecaoCasoCategoriaDoIdSejaMetodoETipoDoMetodoSejaDiferenteDeNulo() throws Exception {
+		IdMetodo id = new IdMetodo(token().getLexeme());
+		id.setTipo(Tipo.BOOLEANO);
+		contexto.setIdAtual(id);
+
+		semantico.executeAction(137, token());
+	}
+
+	@Test
+	public void action137DeveExecutarImpunementeCasoCategoriaDoIdSejaMetodoETipoDoMetodoSejaNulo() throws Exception {
+		IdMetodo id = new IdMetodo(token().getLexeme());
+		id.setTipo(Tipo.NULO);
+		contexto.setIdAtual(id);
+
+		semantico.executeAction(137, token());
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	@Test(expected=SemanticError.class)
 	public void action175DeveLancarExcecaoCasoIdNaoDeclarado() throws Exception {
 		semantico.executeAction(175, token());
 	}

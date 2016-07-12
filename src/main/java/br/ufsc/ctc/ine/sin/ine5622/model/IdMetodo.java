@@ -20,4 +20,8 @@ public class IdMetodo extends Identificador {
 		return this.parametros;
 	}
 
+	public int getNumParametrosFormais() {
+		return this.parametros.size();
+	}
+
 }
