@@ -647,15 +647,9 @@ public class Semantico implements Constants {
 	}
 
 	private boolean tiposCompativeis(Tipo tipoLadoEsq, Tipo tipoExpr) {
-		if (tipoLadoEsq == tipoExpr) {
-			return true;
-		} else if (tipoLadoEsq == Tipo.REAL && tipoExpr == Tipo.INTEIRO) {
-			return true;
-		} else if (tipoLadoEsq == Tipo.CADEIA && tipoExpr == Tipo.CARACTER) {
-			return true;
-		} else {
-			return false;
-		}
+		return (tipoLadoEsq == tipoExpr)
+				|| (tipoLadoEsq == Tipo.REAL && tipoExpr == Tipo.INTEIRO)
+				|| (tipoLadoEsq == Tipo.CADEIA && tipoExpr == Tipo.CARACTER);
 	}
 
 }

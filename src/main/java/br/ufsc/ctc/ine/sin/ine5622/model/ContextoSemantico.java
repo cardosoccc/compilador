@@ -28,6 +28,10 @@ public class ContextoSemantico {
 	private Stack<ContextoMetodo> pilhaContextoMetodo;
 	private Tipo tipoVar;
 
+	public ContextoSemantico() {
+		this.pilhaContextoMetodo = new Stack<ContextoMetodo>();
+	}
+
 	public ContextoLID getContextoLID() {
 		return contextoLID;
 	}
