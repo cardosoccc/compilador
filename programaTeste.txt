@@ -1,11 +1,16 @@
 programa teste;
-inteiro x, y, z;
+
+inteiro x, y;
+inteiro z = 10;
 booleano t;
-booleano u, v = verdadeiro;
+booleano u = falso;
+booleano v = verdadeiro;
 real r = 3.33;
 caracter c = 'c';
 cadeia [10] s;
-metodo teste(ref a: inteiro; val b: booleano) : booleano; {
+
+metodo teste(ref a: inteiro; val b: booleano) : booleano;
+{
 	leia(s);
 	retorne verdadeiro;
 };
@@ -29,7 +34,7 @@ metodo teste(ref a: inteiro; val b: booleano) : booleano; {
 		escreva(s);
 		y := y+1;
 	};
-	
+
 	se (x=11) entao {
 		escreva ('Coisa linda, substituiu!');
 	} senao {
