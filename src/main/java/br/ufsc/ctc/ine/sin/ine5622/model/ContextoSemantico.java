@@ -20,16 +20,24 @@ public class ContextoSemantico {
 	private IdMetodo idMetodoAtual;
 	private Mpp mpp;
 	private Tipo tipoMetodo;
-	private Identificador idAtual;
-	private Tipo tipoExpr;
 	private Tipo tipoLadoEsq;
-	private ContextoEXPR contextoEXPR;
-	private SubCategoria subCategoriaVarIndexada;
-	private Stack<ContextoMetodo> pilhaContextoMetodo;
 	private Tipo tipoVar;
+	private Stack<Identificador> pilhaId;
+	private Stack<Tipo> tipoExpr;
+	private Stack<ContextoEXPR> pilhaContextoEXPR;
+	private Stack<ContextoMetodo> pilhaContextoMetodo;
+	private Stack<SubCategoria> pilhaSubCategoriaVarIndexada;
 
 	public ContextoSemantico() {
 		this.pilhaContextoMetodo = new Stack<ContextoMetodo>();
+		this.tipoExpr = new Stack<Tipo>();
+		this.pilhaContextoEXPR = new Stack<ContextoEXPR>();
+		this.pilhaId = new Stack<Identificador>();
+		this.pilhaSubCategoriaVarIndexada = new Stack<SubCategoria>();
+	}
+
+	public void limparContextoId() {
+		this.popId();
 	}
 
 	public ContextoLID getContextoLID() {
@@ -152,29 +160,41 @@ public class ContextoSemantico {
 
 	}
 
-	public Identificador getIdAtual() {
-		return idAtual;
+	public Identificador peekId() {
+		return pilhaId.peek();
 	}
 
-	public void setIdAtual(Identificador id) {
-		this.idAtual = id;
+	public Identificador popId() {
+		return pilhaId.pop();
+	}
+
+	public void pushId(Identificador id) {
+		this.pilhaId.push(id);
 
 	}
 
-	public Tipo getTipoExpr() {
-		return tipoExpr;
+	public Tipo peekTipoExpr() {
+		return tipoExpr.peek();
 	}
 
-	public void setTipoExpr(Tipo tipoExpr) {
-		this.tipoExpr = tipoExpr;
+	public Tipo popTipoExpr() {
+		return tipoExpr.pop();
 	}
 
-	public ContextoEXPR getContextoEXPR() {
-		return contextoEXPR;
+	public void pushTipoExpr(Tipo tipoExpr) {
+		this.tipoExpr.push(tipoExpr);
 	}
 
-	public void setContextoEXPR(ContextoEXPR contextoEXPR) {
-		this.contextoEXPR = contextoEXPR;
+	public ContextoEXPR peekContextoEXPR() {
+		return pilhaContextoEXPR.peek();
+	}
+
+	public ContextoEXPR popContextoEXPR() {
+		return pilhaContextoEXPR.pop();
+	}
+
+	public void pushContextoEXPR(ContextoEXPR contextoEXPR) {
+		this.pilhaContextoEXPR.push(contextoEXPR);
 	}
 
 	public Tipo getTipoLadoEsq() {
@@ -185,12 +205,16 @@ public class ContextoSemantico {
 		this.tipoLadoEsq = tipoLadoEsq;
 	}
 
-	public SubCategoria getSubCategoriaVarIndexada() {
-		return subCategoriaVarIndexada;
+	public SubCategoria peekSubCategoriaVarIndexada() {
+		return pilhaSubCategoriaVarIndexada.peek();
 	}
 
-	public void setSubCategoriaVarIndexada(SubCategoria subCategoriaVarIndexada) {
-		this.subCategoriaVarIndexada = subCategoriaVarIndexada;
+	public SubCategoria popSubCategoriaVarIndexada() {
+		return pilhaSubCategoriaVarIndexada.pop();
+	}
+
+	public void pushSubCategoriaVarIndexada(SubCategoria subCategoriaVarIndexada) {
+		this.pilhaSubCategoriaVarIndexada.push(subCategoriaVarIndexada);
 	}
 
 	public Tipo getTipoVar() {
