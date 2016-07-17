@@ -2,6 +2,7 @@ package br.ufsc.ctc.ine.sin.ine5622.model;
 
 import static org.junit.Assert.*;
 
+import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Map;
 
@@ -525,6 +526,12 @@ public class SemanticoTest {
 	}
 
 	@Test
+	public void action117DeveEmpilharRetorneCasoIdNaoDeclarado() throws Exception {
+		semantico.executeAction(117, token());
+		assertFalse(contexto.popRetorne());
+	}
+
+	@Test
 	public void action118DeveAtualizarNumParametrosFormais() throws Exception {
 		semantico.executeAction(118, token());
 		assertEquals(1, contexto.getNumParametrosFormais());
@@ -534,7 +541,7 @@ public class SemanticoTest {
 	public void action119DeveAtualizarTipoDoMetodoAtual() throws Exception {
 		Token token = token();
 		IdMetodo idMetodo = new IdMetodo(token.getLexeme());
-		contexto.setIdMetodoAtual(idMetodo);
+		contexto.pushIdMetodo(idMetodo);
 		contexto.setTipoMetodo(Tipo.INTEIRO);
 
 		semantico.executeAction(119, token);
@@ -548,8 +555,10 @@ public class SemanticoTest {
 		Token token = token();
 		Identificador id = new Identificador(token.getLexeme());
 		tabela.incluirIdentificador(id);
+		contexto.pushIdMetodo(new IdMetodo(""));
 		Map<String, Identificador> ids = tabela.getIdentificadoresPorNivel().get(1);
 		assertNotNull(ids.get(token.getLexeme()));
+		contexto.pushRetorne(true);
 
 		semantico.executeAction(120, token);
 
@@ -559,9 +568,34 @@ public class SemanticoTest {
 	@Test
 	public void action120DeveDecrementarNivelAtual() throws Exception {
 		tabela.setNivelAtual(1);
+		contexto.pushIdMetodo(new IdMetodo(""));
+		contexto.pushRetorne(true);
+
 		semantico.executeAction(120, token());
 
 		assertEquals(0, tabela.getNivelAtual());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action120DeveLancarExcecaoCasoRetorneEmpilhadoSejaFalsoETipoDoMetodoSejaDiferenteDeNulo() throws Exception {
+		tabela.setNivelAtual(1);
+		IdMetodo idMetodo = new IdMetodo("");
+		idMetodo.setTipo(Tipo.INTEIRO);
+		contexto.pushIdMetodo(idMetodo);
+		contexto.pushRetorne(false);
+
+		semantico.executeAction(120, token());
+	}
+
+	@Test
+	public void action120DeveLancarExcecaoCasoRetorneEmpilhadoSejaFalsoETipoDoMetodoNulo() throws Exception {
+		tabela.setNivelAtual(1);
+		IdMetodo idMetodo = new IdMetodo("");
+		idMetodo.setTipo(Tipo.NULO);
+		contexto.pushIdMetodo(idMetodo);
+		contexto.pushRetorne(false);
+
+		semantico.executeAction(120, token());
 	}
 
 	@Test
@@ -601,7 +635,7 @@ public class SemanticoTest {
 		contexto.getListaDeclaracao().add(idAntes);
 		tabela.incluirIdentificador(idAntes);
 		IdMetodo idMetodo = new IdMetodo("metodo");
-		contexto.setIdMetodoAtual(idMetodo);
+		contexto.pushIdMetodo(idMetodo);
 
 		semantico.executeAction(123, token);
 
@@ -618,13 +652,13 @@ public class SemanticoTest {
 		contexto.getListaDeclaracao().add(idAntes);
 		tabela.incluirIdentificador(idAntes);
 		IdMetodo idMetodo = new IdMetodo("metodo");
-		contexto.setIdMetodoAtual(idMetodo);
-		contexto.setMpp(Mpp.VALOR);
+		contexto.pushIdMetodo(idMetodo);
+		contexto.setMpp(MetodoPassagem.VALOR);
 
 		semantico.executeAction(123, token);
 
 		IdParametro idDepois = (IdParametro)tabela.getIdentificador(token.getLexeme());
-		assertEquals(Mpp.VALOR, idDepois.getMpp());
+		assertEquals(MetodoPassagem.VALOR, idDepois.getMpp());
 	}
 
 	@Test
@@ -636,7 +670,7 @@ public class SemanticoTest {
 		contexto.getListaDeclaracao().add(idAntes);
 		tabela.incluirIdentificador(idAntes);
 		IdMetodo idMetodo = new IdMetodo("metodo");
-		contexto.setIdMetodoAtual(idMetodo);
+		contexto.pushIdMetodo(idMetodo);
 		contexto.setTipoAtual(Tipo.INTEIRO);
 
 		semantico.executeAction(123, token);
@@ -654,7 +688,7 @@ public class SemanticoTest {
 		contexto.getListaDeclaracao().add(idAntes);
 		tabela.incluirIdentificador(idAntes);
 		IdMetodo idMetodo = new IdMetodo("metodo");
-		contexto.setIdMetodoAtual(idMetodo);
+		contexto.pushIdMetodo(idMetodo);
 
 		semantico.executeAction(123, token);
 
@@ -686,13 +720,13 @@ public class SemanticoTest {
 	@Test
 	public void action126DeveAlterarMppParaReferencia() throws Exception {
 		semantico.executeAction(126, token());
-		assertEquals(Mpp.REFERENCIA, contexto.getMpp());
+		assertEquals(MetodoPassagem.REFERENCIA, contexto.getMpp());
 	}
 
 	@Test
 	public void action127DeveAlterarMppParaValor() throws Exception {
 		semantico.executeAction(127, token());
-		assertEquals(Mpp.VALOR, contexto.getMpp());
+		assertEquals(MetodoPassagem.VALOR, contexto.getMpp());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -703,6 +737,16 @@ public class SemanticoTest {
 	@Test
 	public void action128DeveArmazenarIdAtual() throws Exception {
 		tabela.incluirIdentificador(new Identificador(token().getLexeme()));
+		semantico.executeAction(128, token());
+
+		Identificador id = tabela.getIdentificador(token().getLexeme());
+		assertNotNull(id);
+	}
+
+	@Test
+	public void action128DeveArmazenarIdAtualMesmoQuandoIdEstiverEmNivelAnterior() throws Exception {
+		tabela.incluirIdentificador(new Identificador(token().getLexeme()));
+		tabela.setNivelAtual(1);
 		semantico.executeAction(128, token());
 
 		Identificador id = tabela.getIdentificador(token().getLexeme());
@@ -742,14 +786,14 @@ public class SemanticoTest {
 	@Test
 	public void action131DeveAlterarContextoEXPRParaImpressao() throws Exception {
 		semantico.executeAction(131, token());
-		assertEquals(ContextoEXPR.IMPRESSAO, contexto.peekContextoEXPR());
+		assertEquals(ContextoEXPR.IMPRESSAO, contexto.getContextoEXPR());
 	}
 
 	@Test(expected=SemanticError.class)
 	public void action132DeveLancarExcecaoCasoMetodoAtualNaoTenhaTipo() throws Exception {
 		IdMetodo idMetodo = new IdMetodo(token().getLexeme());
 		idMetodo.setTipo(Tipo.NULO);
-		contexto.setIdMetodoAtual(idMetodo);
+		contexto.pushIdMetodo(idMetodo);
 
 		semantico.executeAction(132, token());
 	}
@@ -758,7 +802,7 @@ public class SemanticoTest {
 	public void action132DeveLancarExcecaoCasoTipoExprSejaDiferenteDoTipoDoMetodoAtual() throws Exception {
 		IdMetodo idMetodo = new IdMetodo(token().getLexeme());
 		idMetodo.setTipo(Tipo.INTEIRO);
-		contexto.setIdMetodoAtual(idMetodo);
+		contexto.pushIdMetodo(idMetodo);
 		contexto.pushTipoExpr(Tipo.BOOLEANO);
 
 		semantico.executeAction(132, token());
@@ -768,8 +812,9 @@ public class SemanticoTest {
 	public void action132DeveGerarCodigoCasoTipoExprSejaIgualAoTipoDoMetodoAtual() throws Exception {
 		IdMetodo idMetodo = new IdMetodo(token().getLexeme());
 		idMetodo.setTipo(Tipo.INTEIRO);
-		contexto.setIdMetodoAtual(idMetodo);
+		contexto.pushIdMetodo(idMetodo);
 		contexto.pushTipoExpr(Tipo.INTEIRO);
+		contexto.pushRetorne(true);
 
 		semantico.executeAction(132, token());
 
@@ -780,8 +825,9 @@ public class SemanticoTest {
 	public void action132DeveGerarCodigoCasoTipoExprSejaCompativelComTipoRealDoMetodoAtual() throws Exception {
 		IdMetodo idMetodo = new IdMetodo(token().getLexeme());
 		idMetodo.setTipo(Tipo.REAL);
-		contexto.setIdMetodoAtual(idMetodo);
+		contexto.pushIdMetodo(idMetodo);
 		contexto.pushTipoExpr(Tipo.INTEIRO);
+		contexto.pushRetorne(false);
 
 		semantico.executeAction(132, token());
 
@@ -792,12 +838,26 @@ public class SemanticoTest {
 	public void action132DeveGerarCodigoCasoTipoExprSejaCompativelComTipoCadeiaDoMetodoAtual() throws Exception {
 		IdMetodo idMetodo = new IdMetodo(token().getLexeme());
 		idMetodo.setTipo(Tipo.CADEIA);
-		contexto.setIdMetodoAtual(idMetodo);
+		contexto.pushIdMetodo(idMetodo);
 		contexto.pushTipoExpr(Tipo.CARACTER);
+		contexto.pushRetorne(false);
 
 		semantico.executeAction(132, token());
 
 		assertTrue(semantico.isGeradorCodigoAcionado());
+	}
+
+	@Test
+	public void action132DesempilharValorAtualDeRetorneEEmpilharValorVerdadeiroCasoTipoExprSejaCompativelComTipoCadeiaDoMetodoAtual() throws Exception {
+		IdMetodo idMetodo = new IdMetodo(token().getLexeme());
+		idMetodo.setTipo(Tipo.CADEIA);
+		contexto.pushIdMetodo(idMetodo);
+		contexto.pushTipoExpr(Tipo.CARACTER);
+		contexto.pushRetorne(false);
+
+		semantico.executeAction(132, token());
+
+		assertTrue(contexto.popRetorne());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -854,6 +914,30 @@ public class SemanticoTest {
 		semantico.executeAction(134, token());
 	}
 
+	@Test(expected=EmptyStackException.class)
+	public void action134DeveDesempilharIdCasoTipoExprSejaCompativelComTipoLadoEsq() throws Exception {
+		contexto.pushTipoExpr(Tipo.INTEIRO);
+		contexto.setTipoLadoEsq(Tipo.INTEIRO);
+		contexto.pushId(new Identificador(token().getLexeme()));
+		assertNotNull(contexto.peekId());
+
+		semantico.executeAction(134, token());
+
+		contexto.peekId();
+	}
+
+	@Test(expected=EmptyStackException.class)
+	public void action134DeveDesempilharTipoExprCasoTipoExprSejaCompativelComTipoLadoEsq() throws Exception {
+		contexto.pushTipoExpr(Tipo.INTEIRO);
+		contexto.setTipoLadoEsq(Tipo.INTEIRO);
+		contexto.pushId(new Identificador(token().getLexeme()));
+		assertNotNull(contexto.peekTipoExpr());
+
+		semantico.executeAction(134, token());
+
+		contexto.peekTipoExpr();
+	}
+
 	@Test(expected=SemanticError.class)
 	public void action135DeveLancarExcecaoCasoIdAtualNaoSejaVariavel() throws Exception {
 		IdConstante id = new IdConstante(token().getLexeme());
@@ -907,6 +991,28 @@ public class SemanticoTest {
 		semantico.executeAction(136, token());
 
 		assertEquals(Tipo.CARACTER, contexto.getTipoLadoEsq());
+	}
+
+	@Test(expected=EmptyStackException.class)
+	public void action136DeveDesempilharTipoExprCasoTipoExprSejaInteiroESubCategoriaVarIndexadaSejaCadeia() throws Exception {
+		contexto.pushTipoExpr(Tipo.INTEIRO);
+		contexto.pushSubCategoriaVarIndexada(SubCategoria.CADEIA);
+		assertNotNull(contexto.peekTipoExpr());
+
+		semantico.executeAction(136, token());
+
+		contexto.peekTipoExpr();
+	}
+
+	@Test(expected=EmptyStackException.class)
+	public void action136DeveDesempilharSubCategoriaVarIndexadaCasoTipoExprSejaInteiroESubCategoriaVarIndexadaSejaCadeia() throws Exception {
+		contexto.pushTipoExpr(Tipo.INTEIRO);
+		contexto.pushSubCategoriaVarIndexada(SubCategoria.CADEIA);
+		assertNotNull(contexto.peekSubCategoriaVarIndexada());
+
+		semantico.executeAction(136, token());
+
+		contexto.peekSubCategoriaVarIndexada();
 	}
 
 	@Test
@@ -966,7 +1072,7 @@ public class SemanticoTest {
 	@Test
 	public void action138DeveAlterarContextoEXPRParaParAtual() throws Exception {
 		semantico.executeAction(138, token());
-		assertEquals(ContextoEXPR.PAR_ATUAL, contexto.peekContextoEXPR());
+		assertEquals(ContextoEXPR.PAR_ATUAL, contexto.getContextoEXPR());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -991,6 +1097,19 @@ public class SemanticoTest {
 		assertTrue(semantico.isGeradorCodigoAcionado());
 	}
 
+	@Test(expected=EmptyStackException.class)
+	public void action139DeveDesempilharIdCasoIdSejaMetodoENumParametrosFormaisIgualAoNumParametrosAtuais() throws Exception {
+		IdMetodo id = new IdMetodo(token().getLexeme());
+		ContextoMetodo contextoMetodo = new ContextoMetodo();
+		contextoMetodo.setNumParametrosAtuais(0);
+		contexto.pushContextoMetodo(contextoMetodo);
+		contexto.pushId(id);
+		assertNotNull(contexto.peekId());
+
+		semantico.executeAction(139, token());
+
+		contexto.peekId();
+	}
 
 	@Test(expected=SemanticError.class)
 	public void action140DeveLancarExcecaoCasoCategoriaDoIdSejaDiferenteDeMetodo() throws Exception {
@@ -1025,6 +1144,785 @@ public class SemanticoTest {
 		semantico.executeAction(140, token());
 
 		assertTrue(semantico.isGeradorCodigoAcionado());
+	}
+
+	@Test(expected=EmptyStackException.class)
+	public void action140DeveDesempilharIdCasoCategoriaDoIdSejaMetodoTipoNuloENumParametrosFormaisSejaZero() throws Exception {
+		IdMetodo id = new IdMetodo(token().getLexeme());
+		id.setTipo(Tipo.NULO);
+		contexto.pushId(id);
+		assertNotNull(contexto.peekId());
+
+		semantico.executeAction(140, token());
+
+		contexto.peekId();
+	}
+
+
+	@Test
+	public void action141DeveIncrementarNumParametrosAtuaisCasoContextoEXPRSejaParAtual() throws Exception {
+		ContextoMetodo contextoMetodo = new ContextoMetodo();
+		contexto.pushContextoMetodo(contextoMetodo);
+
+		IdMetodo idMetodo = new IdMetodo(token().getLexeme());
+		IdParametro idParametro = new IdParametro("");
+		idParametro.setTipo(Tipo.BOOLEANO);
+		idParametro.setMpp(MetodoPassagem.VALOR);
+		idMetodo.incluirParametro(idParametro);
+		contexto.pushId(idMetodo);
+		contexto.pushTipoExpr(Tipo.BOOLEANO);
+		contexto.setContextoEXPR(ContextoEXPR.PAR_ATUAL);
+
+		semantico.executeAction(141, token());
+
+		assertEquals(1, contextoMetodo.getNumParametrosAtuais());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action141DeveLancarExcecaoCasoParametroAtualNaoExista() throws Exception {
+		ContextoMetodo contextoMetodo = new ContextoMetodo();
+		contexto.pushContextoMetodo(contextoMetodo);
+
+		IdMetodo idMetodo = new IdMetodo(token().getLexeme());
+		contexto.pushId(idMetodo);
+		contexto.pushTipoExpr(Tipo.BOOLEANO);
+		contexto.setContextoEXPR(ContextoEXPR.PAR_ATUAL);
+
+		semantico.executeAction(141, token());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action141DeveLancarExcecaoCasoTipoDoParametroAtualNaoCorrespondaAoTipoDoParametroFormal() throws Exception {
+		ContextoMetodo contextoMetodo = new ContextoMetodo();
+		contexto.pushContextoMetodo(contextoMetodo);
+
+		IdMetodo idMetodo = new IdMetodo(token().getLexeme());
+		IdParametro idParametro = new IdParametro("");
+		idParametro.setTipo(Tipo.INTEIRO);
+		idParametro.setMpp(MetodoPassagem.VALOR);
+		idMetodo.incluirParametro(idParametro);
+		contexto.pushId(idMetodo);
+		contexto.pushTipoExpr(Tipo.BOOLEANO);
+		contexto.setContextoEXPR(ContextoEXPR.PAR_ATUAL);
+
+		semantico.executeAction(141, token());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action141DeveLancarExcecaoCasoMppDoParametroFormalSejaRefECategoriaDoParametroAtualSejaDiferenteDeVariavelOuParametro() throws Exception {
+		ContextoMetodo contextoMetodo = new ContextoMetodo();
+		contexto.pushContextoMetodo(contextoMetodo);
+
+		IdMetodo idMetodo = new IdMetodo("metodo");
+		IdParametro idParametro = new IdParametro("param");
+		idParametro.setTipo(Tipo.INTEIRO);
+		idParametro.setMpp(MetodoPassagem.REFERENCIA);
+		idMetodo.incluirParametro(idParametro);
+		contexto.pushId(idMetodo);
+		contexto.pushTipoExpr(Tipo.INTEIRO);
+		contexto.setContextoEXPR(ContextoEXPR.PAR_ATUAL);
+
+		tabela.incluirIdentificador(new IdConstante(token().getLexeme()));
+
+		semantico.executeAction(141, token());
+	}
+
+	@Test
+	public void action141NaoDeveLancarExcecaoCasoMppDoParametroFormalSejaRefECategoriaDoParametroAtualSejaVariavel() throws Exception {
+		ContextoMetodo contextoMetodo = new ContextoMetodo();
+		contexto.pushContextoMetodo(contextoMetodo);
+
+		IdMetodo idMetodo = new IdMetodo("metodo");
+		IdParametro idParametro = new IdParametro("param");
+		idParametro.setTipo(Tipo.INTEIRO);
+		idParametro.setMpp(MetodoPassagem.REFERENCIA);
+		idMetodo.incluirParametro(idParametro);
+		contexto.pushId(idMetodo);
+		contexto.pushTipoExpr(Tipo.INTEIRO);
+		contexto.setContextoEXPR(ContextoEXPR.PAR_ATUAL);
+
+		tabela.incluirIdentificador(new IdVariavel(token().getLexeme()));
+
+		semantico.executeAction(141, token());
+	}
+
+	@Test
+	public void action141NaoDeveLancarExcecaoCasoMppDoParametroFormalSejaRefECategoriaDoParametroAtualSejaParametro() throws Exception {
+		ContextoMetodo contextoMetodo = new ContextoMetodo();
+		contexto.pushContextoMetodo(contextoMetodo);
+
+		IdMetodo idMetodo = new IdMetodo("metodo");
+		IdParametro idParametro = new IdParametro("param");
+		idParametro.setTipo(Tipo.INTEIRO);
+		idParametro.setMpp(MetodoPassagem.REFERENCIA);
+		idMetodo.incluirParametro(idParametro);
+		contexto.pushId(idMetodo);
+		contexto.pushTipoExpr(Tipo.INTEIRO);
+		contexto.setContextoEXPR(ContextoEXPR.PAR_ATUAL);
+
+		tabela.incluirIdentificador(new IdParametro(token().getLexeme()));
+
+		semantico.executeAction(141, token());
+	}
+
+	@Test(expected=EmptyStackException.class)
+	public void action141DeveDesempilharTipoExprCasoMppDoParametroFormalSejaRefECategoriaDoParametroAtualSejaParametro() throws Exception {
+		ContextoMetodo contextoMetodo = new ContextoMetodo();
+		contexto.pushContextoMetodo(contextoMetodo);
+
+		IdMetodo idMetodo = new IdMetodo("metodo");
+		IdParametro idParametro = new IdParametro("param");
+		idParametro.setTipo(Tipo.INTEIRO);
+		idParametro.setMpp(MetodoPassagem.REFERENCIA);
+		idMetodo.incluirParametro(idParametro);
+		contexto.pushId(idMetodo);
+		contexto.pushTipoExpr(Tipo.INTEIRO);
+		contexto.setContextoEXPR(ContextoEXPR.PAR_ATUAL);
+		tabela.incluirIdentificador(new IdParametro(token().getLexeme()));
+		assertNotNull(contexto.peekTipoExpr());
+
+		semantico.executeAction(141, token());
+
+		contexto.peekTipoExpr();
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action141DeveLancarExcecaoCasoContextoEXPRSejaImpressaoETipoExpreSejaBooleano() throws Exception {
+		contexto.setContextoEXPR(ContextoEXPR.IMPRESSAO);
+		contexto.pushTipoExpr(Tipo.BOOLEANO);
+
+		semantico.executeAction(141, token());
+	}
+
+	@Test
+	public void action141DeveGerarCodigoCasoContextoEXPRSejaImpressaoETipoExpreSejaDiferenteDeBooleano() throws Exception {
+		contexto.setContextoEXPR(ContextoEXPR.IMPRESSAO);
+		contexto.pushTipoExpr(Tipo.INTEIRO);
+
+		semantico.executeAction(141, token());
+
+		assertTrue(semantico.isGeradorCodigoAcionado());
+	}
+
+	@Test(expected=EmptyStackException.class)
+	public void action141DeveDesempilharTipoExprCasoContextoEXPRSejaImpressaoETipoExpreSejaDiferenteDeBooleano() throws Exception {
+		contexto.setContextoEXPR(ContextoEXPR.IMPRESSAO);
+		contexto.pushTipoExpr(Tipo.INTEIRO);
+		assertNotNull(contexto.peekTipoExpr());
+
+		semantico.executeAction(141, token());
+
+		contexto.peekTipoExpr();
+	}
+
+	@Test
+	public void action142DeveEmpilharTipoExprComValorDeTipoExpSimples() throws Exception {
+		contexto.pushTipoExprSimples(Tipo.INTEIRO);
+
+		semantico.executeAction(142, token());
+
+		assertEquals(Tipo.INTEIRO, contexto.peekTipoExpr());
+	}
+
+	@Test(expected=EmptyStackException.class)
+	public void action142DeveDesempilharTipoExprSimples() throws Exception {
+		contexto.pushTipoExprSimples(Tipo.INTEIRO);
+
+		semantico.executeAction(142, token());
+
+		contexto.peekTipoExprSimples();
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action143DeveLancarExcecaoCasoTipoExpSimplesSejaIncompativelComTipoExpr() throws Exception {
+		contexto.pushTipoExpr(Tipo.BOOLEANO);
+		contexto.pushTipoExprSimples(Tipo.REAL);
+
+		semantico.executeAction(143, token());
+	}
+
+	@Test
+	public void action143AlterarTipoExprParaBooleanoCasoTipoExpSimplesSejaIncompativelComTipoExpr() throws Exception {
+		contexto.pushTipoExpr(Tipo.INTEIRO);
+		contexto.pushTipoExprSimples(Tipo.REAL);
+
+		semantico.executeAction(143, token());
+
+		assertEquals(Tipo.BOOLEANO, contexto.peekTipoExpr());
+	}
+
+	@Test(expected=EmptyStackException.class)
+	public void action143DesempilharTipoExpSimplesCasoTipoExpSimplesSejaIncompativelComTipoExpr() throws Exception {
+		contexto.pushTipoExpr(Tipo.INTEIRO);
+		contexto.pushTipoExprSimples(Tipo.REAL);
+
+		semantico.executeAction(143, token());
+
+		contexto.peekTipoExprSimples();
+	}
+
+	@Test
+	public void action144DeveEmpilharOperadorRelacionalEQ() throws Exception {
+		semantico.executeAction(144, token());
+		assertEquals(OperadorRel.EQ, contexto.popOperadorRel());
+	}
+
+	@Test
+	public void action145DeveEmpilharOperadorRelacionalLT() throws Exception {
+		semantico.executeAction(145, token());
+		assertEquals(OperadorRel.LT, contexto.popOperadorRel());
+	}
+
+	@Test
+	public void action146DeveEmpilharOperadorRelacionalGT() throws Exception {
+		semantico.executeAction(146, token());
+		assertEquals(OperadorRel.GT, contexto.popOperadorRel());
+	}
+
+	@Test
+	public void action147DeveEmpilharOperadorRelacionalGE() throws Exception {
+		semantico.executeAction(147, token());
+		assertEquals(OperadorRel.GE, contexto.popOperadorRel());
+	}
+
+	@Test
+	public void action148DeveEmpilharOperadorRelacionalLE() throws Exception {
+		semantico.executeAction(148, token());
+		assertEquals(OperadorRel.LE, contexto.popOperadorRel());
+	}
+
+	@Test
+	public void action149DeveEmpilharOperadorRelacionalNE() throws Exception {
+		semantico.executeAction(149, token());
+		assertEquals(OperadorRel.NE, contexto.popOperadorRel());
+	}
+
+	@Test
+	public void action150DeveEmpilharTipoExpSimplesComValorDeTipoTermo() throws Exception {
+		contexto.pushTipoTermo(Tipo.REAL);
+
+		semantico.executeAction(150, token());
+
+		assertEquals(Tipo.REAL, contexto.popTipoExprSimples());
+	}
+
+	@Test(expected=EmptyStackException.class)
+	public void action150DeveDesempilharTipoTermo() throws Exception {
+		contexto.pushTipoTermo(Tipo.REAL);
+
+		semantico.executeAction(150, token());
+
+		contexto.peekTipoTermo();
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action151DeveLancarExcecaoCasoOperadorAdicaoSejaUsadoComValorDiferenteDeRealOuInteiro() throws Exception {
+		contexto.pushTipoExprSimples(Tipo.BOOLEANO);
+		contexto.pushOperadorAdd(OperadorAdd.ADD);
+
+		semantico.executeAction(151, token());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action151DeveLancarExcecaoCasoOperadorSubtracaoSejaUsadoComValorDiferenteDeRealOuInteiro() throws Exception {
+		contexto.pushTipoExprSimples(Tipo.CADEIA);
+		contexto.pushOperadorAdd(OperadorAdd.SUB);
+
+		semantico.executeAction(151, token());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action151DeveLancarExcecaoCasoOperadorOuSejaUsadoComValorDiferenteDeBooleano() throws Exception {
+		contexto.pushTipoExprSimples(Tipo.INTEIRO);
+		contexto.pushOperadorAdd(OperadorAdd.OU);
+
+		semantico.executeAction(151, token());
+	}
+
+	@Test
+	public void action151NaoDeveLancarExcecaoCasoOperadorOuSejaUsadoComValorBooleano() throws Exception {
+		contexto.pushTipoExprSimples(Tipo.BOOLEANO);
+		contexto.pushOperadorAdd(OperadorAdd.OU);
+
+		semantico.executeAction(151, token());
+	}
+
+	@Test
+	public void action151NaoDeveLancarExcecaoCasoOperadorAritmeticoSejaUsadoComValorInteiro() throws Exception {
+		contexto.pushTipoExprSimples(Tipo.INTEIRO);
+		contexto.pushOperadorAdd(OperadorAdd.ADD);
+
+		semantico.executeAction(151, token());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action152DeveLancarExcecaoCasoTipoTermoSejaIncompativelComTipoExprSimples() throws Exception {
+		contexto.pushTipoExprSimples(Tipo.BOOLEANO);
+		contexto.pushTipoTermo(Tipo.REAL);
+
+		semantico.executeAction(152, token());
+	}
+
+	@Test
+	public void action152DeveGerarCodigoCasoTipoTermoSejaInteiroETipoExprSimplesSejaReal() throws Exception {
+		contexto.pushTipoExprSimples(Tipo.REAL);
+		contexto.pushTipoTermo(Tipo.INTEIRO);
+
+		semantico.executeAction(152, token());
+
+		assertTrue(semantico.isGeradorCodigoAcionado());
+	}
+
+	@Test
+	public void action152DeveGerarCodigoCasoTipoTermoSejaRealETipoExprSimplesSejaInteiro() throws Exception {
+		contexto.pushTipoExprSimples(Tipo.INTEIRO);
+		contexto.pushTipoTermo(Tipo.REAL);
+
+		semantico.executeAction(152, token());
+
+		assertTrue(semantico.isGeradorCodigoAcionado());
+	}
+
+	@Test
+	public void action152DeveGerarCodigoCasoTipoTermoSejaBooleanoETipoExprSimplesSejaBooleano() throws Exception {
+		contexto.pushTipoExprSimples(Tipo.BOOLEANO);
+		contexto.pushTipoTermo(Tipo.BOOLEANO);
+
+		semantico.executeAction(152, token());
+
+		assertTrue(semantico.isGeradorCodigoAcionado());
+	}
+
+	@Test
+	public void action152DeveAlterarValorDeTipoExprSimplesParaBooleanoCasoAmbosOperandosSejamBooleanos() throws Exception {
+		contexto.pushTipoExprSimples(Tipo.BOOLEANO);
+		contexto.pushTipoTermo(Tipo.BOOLEANO);
+
+		semantico.executeAction(152, token());
+
+		assertEquals(Tipo.BOOLEANO, contexto.popTipoExprSimples());
+	}
+
+	@Test
+	public void action152DeveAlterarValorDeTipoExprSimplesParaRealCasoTipoTermoSejaInteiroETipoExprSimplesSejaReal() throws Exception {
+		contexto.pushTipoExprSimples(Tipo.REAL);
+		contexto.pushTipoTermo(Tipo.INTEIRO);
+
+		semantico.executeAction(152, token());
+
+		assertEquals(Tipo.REAL, contexto.popTipoExprSimples());
+	}
+
+	@Test
+	public void action152DeveAlterarValorDeTipoExprSimplesParaRealCasoTipoTermoSejaRealETipoExprSimplesSejaInteiro() throws Exception {
+		contexto.pushTipoExprSimples(Tipo.INTEIRO);
+		contexto.pushTipoTermo(Tipo.REAL);
+
+		semantico.executeAction(152, token());
+
+		assertEquals(Tipo.REAL, contexto.popTipoExprSimples());
+	}
+
+	@Test
+	public void action152DeveAlterarValorDeTipoExprSimplesParaValorDeTipoExprSimplesCasoOperandosSejamDeMesmoTipo() throws Exception {
+		contexto.pushTipoExprSimples(Tipo.INTEIRO);
+		contexto.pushTipoTermo(Tipo.INTEIRO);
+
+		semantico.executeAction(152, token());
+
+		assertEquals(Tipo.INTEIRO, contexto.popTipoExprSimples());
+	}
+
+	@Test(expected=EmptyStackException.class)
+	public void action152DeveDesempilharTipoTipoTermoCasoOperandosCompativeis() throws Exception {
+		contexto.pushTipoExprSimples(Tipo.INTEIRO);
+		contexto.pushTipoTermo(Tipo.INTEIRO);
+
+		semantico.executeAction(152, token());
+
+		contexto.peekTipoTermo();
+	}
+
+	@Test
+	public void action153DeveEmpilharOperadorAddADD() throws Exception {
+		semantico.executeAction(153, token());
+		assertEquals(OperadorAdd.ADD, contexto.popOperadorAdd());
+	}
+
+	@Test
+	public void action154DeveEmpilharOperadorAddSUB() throws Exception {
+		semantico.executeAction(154, token());
+		assertEquals(OperadorAdd.SUB, contexto.popOperadorAdd());
+	}
+
+	@Test
+	public void action155DeveEmpilharOperadorAddOU() throws Exception {
+		semantico.executeAction(155, token());
+		assertEquals(OperadorAdd.OU, contexto.popOperadorAdd());
+	}
+
+	@Test
+	public void action156DeveAlterarEmpilharTipoTermoComValorDeTipoFator() throws Exception {
+		contexto.pushTipoFator(Tipo.REAL);
+
+		semantico.executeAction(156, token());
+
+		assertEquals(Tipo.REAL, contexto.popTipoTermo());
+	}
+
+	@Test(expected=EmptyStackException.class)
+	public void action156DeveDesempilharTipoFator() throws Exception {
+		contexto.pushTipoFator(Tipo.REAL);
+
+		semantico.executeAction(156, token());
+
+		contexto.peekTipoFator();
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action157DeveLancarExcecaoCasoOperadorMULSejaUsadoComValorDiferenteDeRealOuInteiro() throws Exception {
+		contexto.pushOperadorMult(OperadorMult.MUL);
+		contexto.pushTipoTermo(Tipo.CADEIA);
+
+		semantico.executeAction(157, token());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action157DeveLancarExcecaoCasoOperadorFRCSejaUsadoComValorDiferenteDeRealOuInteiro() throws Exception {
+		contexto.pushOperadorMult(OperadorMult.FRC);
+		contexto.pushTipoTermo(Tipo.BOOLEANO);
+
+		semantico.executeAction(157, token());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action157DeveLancarExcecaoCasoOperadorESejaUsadoComValorDiferenteDeBooleano() throws Exception {
+		contexto.pushOperadorMult(OperadorMult.E);
+		contexto.pushTipoTermo(Tipo.INTEIRO);
+
+		semantico.executeAction(157, token());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action157DeveLancarExcecaoCasoOperadorDIVSejaUsadoComValorDiferenteDeInteiro() throws Exception {
+		contexto.pushOperadorMult(OperadorMult.DIV);
+		contexto.pushTipoTermo(Tipo.REAL);
+
+		semantico.executeAction(157, token());
+	}
+
+	@Test
+	public void action157NaoDeveLancarExcecaoCasoOperadorDIVSejaUsadoComValorInteiro() throws Exception {
+		contexto.pushOperadorMult(OperadorMult.DIV);
+		contexto.pushTipoTermo(Tipo.INTEIRO);
+
+		semantico.executeAction(157, token());
+	}
+
+	@Test
+	public void action157NaoDeveLancarExcecaoCasoOperadorMULSejaUsadoComValorReal() throws Exception {
+		contexto.pushOperadorMult(OperadorMult.MUL);
+		contexto.pushTipoTermo(Tipo.REAL);
+
+		semantico.executeAction(157, token());
+	}
+
+	@Test
+	public void action157NaoDeveLancarExcecaoCasoOperadorFRCSejaUsadoComValorInteiro() throws Exception {
+		contexto.pushOperadorMult(OperadorMult.FRC);
+		contexto.pushTipoTermo(Tipo.INTEIRO);
+
+		semantico.executeAction(157, token());
+	}
+
+	@Test
+	public void action157NaoDeveLancarExcecaoCasoOperadorESejaUsadoComValorBOOLEANO() throws Exception {
+		contexto.pushOperadorMult(OperadorMult.E);
+		contexto.pushTipoTermo(Tipo.BOOLEANO);
+
+		semantico.executeAction(157, token());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action158DeveLancarExcecaoCasoOperadorDIVSejaUsadoComTipoTermoDiferenteDeInteiro() throws Exception {
+		contexto.pushOperadorMult(OperadorMult.DIV);
+		contexto.pushTipoTermo(Tipo.REAL);
+		contexto.pushTipoFator(Tipo.INTEIRO);
+
+		semantico.executeAction(158, token());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action158DeveLancarExcecaoCasoOperadorDIVSejaUsadoComTipoFatorDiferenteDeInteiro() throws Exception {
+		contexto.pushOperadorMult(OperadorMult.DIV);
+		contexto.pushTipoTermo(Tipo.INTEIRO);
+		contexto.pushTipoFator(Tipo.REAL);
+
+		semantico.executeAction(158, token());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action158DeveLancarExcecaoCasoOperadorMULSejaUsadoComTipoFatorIncompativel() throws Exception {
+		contexto.pushOperadorMult(OperadorMult.MUL);
+		contexto.pushTipoTermo(Tipo.INTEIRO);
+		contexto.pushTipoFator(Tipo.CADEIA);
+
+		semantico.executeAction(158, token());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action158DeveLancarExcecaoCasoOperadorFRCSejaUsadoComTipoFatorIncompativel() throws Exception {
+		contexto.pushOperadorMult(OperadorMult.FRC);
+		contexto.pushTipoTermo(Tipo.REAL);
+		contexto.pushTipoFator(Tipo.BOOLEANO);
+
+		semantico.executeAction(158, token());
+	}
+
+	@Test
+	public void action158DeveEmpilharTipoRealEmTipoTermoCasoOperadorFRCSejaUsadoComOperandosCompativeis() throws Exception {
+		contexto.pushOperadorMult(OperadorMult.FRC);
+		contexto.pushTipoTermo(Tipo.INTEIRO);
+		contexto.pushTipoFator(Tipo.INTEIRO);
+
+		semantico.executeAction(158, token());
+
+		assertEquals(Tipo.REAL, contexto.popTipoTermo());
+	}
+
+	@Test
+	public void action158DeveEmpilharTipoInteiroEmTipoTermoCasoOperadorDIVSejaUsadoComOperandosCompativeis() throws Exception {
+		contexto.pushOperadorMult(OperadorMult.DIV);
+		contexto.pushTipoTermo(Tipo.INTEIRO);
+		contexto.pushTipoFator(Tipo.INTEIRO);
+
+		semantico.executeAction(158, token());
+
+		assertEquals(Tipo.INTEIRO, contexto.popTipoTermo());
+	}
+
+	@Test
+	public void action158DeveEmpilharTipoRealEmTipoTermoCasoOperadorMULSejaUsadoComOperandosMistos() throws Exception {
+		contexto.pushOperadorMult(OperadorMult.MUL);
+		contexto.pushTipoTermo(Tipo.INTEIRO);
+		contexto.pushTipoFator(Tipo.REAL);
+
+		semantico.executeAction(158, token());
+
+		assertEquals(Tipo.REAL, contexto.popTipoTermo());
+	}
+
+	@Test
+	public void action158DeveGerarCodigoOperandosSejamCompativeis() throws Exception {
+		contexto.pushOperadorMult(OperadorMult.E);
+		contexto.pushTipoTermo(Tipo.BOOLEANO);
+		contexto.pushTipoFator(Tipo.BOOLEANO);
+
+		semantico.executeAction(158, token());
+
+		assertTrue(semantico.isGeradorCodigoAcionado());
+	}
+
+	@Test(expected=EmptyStackException.class)
+	public void action158DeveDesempilharTipoFatorCasoOperandosCompativeis() throws Exception {
+		contexto.pushOperadorMult(OperadorMult.E);
+		contexto.pushTipoFator(Tipo.REAL);
+		contexto.pushTipoTermo(Tipo.REAL);
+
+		semantico.executeAction(158, token());
+
+		contexto.peekTipoFator();
+	}
+
+	@Test
+	public void action158DeveEmpilharValorDeTipoTermoEmTipoTermoCasoOperadorESejaUsadoComBooleanos() throws Exception {
+		contexto.pushOperadorMult(OperadorMult.E);
+		contexto.pushTipoTermo(Tipo.BOOLEANO);
+		contexto.pushTipoFator(Tipo.BOOLEANO);
+
+		semantico.executeAction(158, token());
+
+		assertEquals(Tipo.BOOLEANO, contexto.popTipoTermo());
+	}
+
+	@Test
+	public void action159DeveEmpilharOperadorMultMUL() throws Exception {
+		semantico.executeAction(159, token());
+		assertEquals(OperadorMult.MUL, contexto.popOperadorMult());
+	}
+
+	@Test
+	public void action160DeveEmpilharOperadorMultFRC() throws Exception {
+		semantico.executeAction(160, token());
+		assertEquals(OperadorMult.FRC, contexto.popOperadorMult());
+	}
+
+	@Test
+	public void action161DeveEmpilharOperadorMultE() throws Exception {
+		semantico.executeAction(161, token());
+		assertEquals(OperadorMult.E, contexto.popOperadorMult());
+	}
+
+	@Test
+	public void action162DeveEmpilharOperadorMultDIV() throws Exception {
+		semantico.executeAction(162, token());
+		assertEquals(OperadorMult.DIV, contexto.popOperadorMult());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action163DeveLancarExcecaoCasoOpNegaSejaVerdadeiro() throws Exception {
+		contexto.setOpNega(true);
+		semantico.executeAction(163, token());
+	}
+
+	@Test
+	public void action163DeveAlterarParaVerdadeiroOpNegaCasoOpNegaSejaFalso() throws Exception {
+		contexto.setOpNega(false);
+
+		semantico.executeAction(163, token());
+
+		assertTrue(contexto.isOpNega());
+	}
+
+
+	@Test(expected=SemanticError.class)
+	public void action164DeveLancarExcecaoCasoTipoFatorSejaDiferenteDeBooleano() throws Exception {
+		contexto.pushTipoFator(Tipo.INTEIRO);
+		semantico.executeAction(164, token());
+	}
+
+	@Test
+	public void action164DeveAlterarParaFalsoOpNegaCasoTipoFatorSejaBooleano() throws Exception {
+		contexto.pushTipoFator(Tipo.BOOLEANO);
+
+		semantico.executeAction(164, token());
+
+		assertFalse(contexto.isOpNega());
+	}
+
+	@Test
+	public void action164NaoDeveDesempilharTipoFator() throws Exception {
+		contexto.pushTipoFator(Tipo.BOOLEANO);
+
+		semantico.executeAction(164, token());
+
+		assertEquals(Tipo.BOOLEANO, contexto.popTipoFator());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action165DeveLancarExcecaoCasoOpUnarioSejaVerdeiro() throws Exception {
+		contexto.setOpUnario(true);
+		semantico.executeAction(165, token());
+	}
+
+	@Test
+	public void action165DeveAlterarPAraVerdadeiroOpUnarioCasoOpUnarioSejaFalse() throws Exception {
+		contexto.setOpUnario(false);
+
+		semantico.executeAction(165, token());
+
+		assertTrue(contexto.isOpUnario());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void action166DeveLancarExcecaoCasoTipoFatorSejaDiferenteDeInteiroOuReal() throws Exception {
+		contexto.pushTipoFator(Tipo.BOOLEANO);
+		semantico.executeAction(166, token());
+	}
+
+	@Test
+	public void action166DeveAlterarParaFalsoOpUnarioCasoTipoFatorSejaInteiro() throws Exception {
+		contexto.pushTipoFator(Tipo.INTEIRO);
+		semantico.executeAction(166, token());
+
+		assertFalse(contexto.isOpUnario());
+	}
+
+	@Test
+	public void action166DeveAlterarParaFalsoOpUnarioCasoTipoFatorSejaReal() throws Exception {
+		contexto.pushTipoFator(Tipo.REAL);
+		semantico.executeAction(166, token());
+
+		assertFalse(contexto.isOpUnario());
+	}
+
+	@Test
+	public void action166NaoDeveDesempilharTipoFator() throws Exception {
+		contexto.pushTipoFator(Tipo.REAL);
+
+		semantico.executeAction(166, token());
+
+		assertEquals(Tipo.REAL, contexto.popTipoFator());
+	}
+
+	@Test
+	public void action167DeveAlterarParaFalsoOpNega() throws Exception {
+		semantico.executeAction(167, token());
+		assertFalse(contexto.isOpNega());
+	}
+
+	@Test
+	public void action167DeveAlterarPAraFalsoOpUnario() throws Exception {
+		semantico.executeAction(167, token());
+		assertFalse(contexto.isOpUnario());
+	}
+
+	@Test
+	public void action168DeveEmpilharValorDeTipoExprEmTipoFator() throws Exception {
+		contexto.pushTipoExpr(Tipo.CADEIA);
+
+		semantico.executeAction(168, token());
+
+		assertEquals(Tipo.CADEIA, contexto.popTipoFator());
+
+	}
+
+	@Test(expected=EmptyStackException.class)
+	public void action168DeveDesempilharTipoExpr() throws Exception {
+		contexto.pushTipoExpr(Tipo.CADEIA);
+
+		semantico.executeAction(168, token());
+
+		contexto.peekTipoExpr();
+	}
+
+	@Test
+	public void action169DeveEmpilharValorDeTipoVarEmTipoFator() throws Exception {
+		contexto.pushTipoVar(Tipo.CARACTER);
+		contexto.pushId(new Identificador(token().getLexeme()));
+
+		semantico.executeAction(169, token());
+
+		assertEquals(Tipo.CARACTER, contexto.popTipoFator());
+	}
+
+	@Test(expected=EmptyStackException.class)
+	public void action169DeveDesempilharTipoVar() throws Exception {
+		contexto.pushTipoVar(Tipo.REAL);
+		contexto.pushId(new Identificador(token().getLexeme()));
+
+		semantico.executeAction(169, token());
+
+		contexto.peekTipoVar();
+	}
+
+	@Test(expected=EmptyStackException.class)
+	public void action169DeveDesempilharId() throws Exception {
+		contexto.pushTipoVar(Tipo.REAL);
+		contexto.pushId(new Identificador(token().getLexeme()));
+
+		semantico.executeAction(169, token());
+
+		contexto.peekId();
+	}
+
+	@Test
+	public void action170DeveEmpilharValorDeTipoConstEmTipoFator() throws Exception {
+		contexto.setTipoConst(Tipo.BOOLEANO);
+
+		semantico.executeAction(170, token());
+
+		assertEquals(Tipo.BOOLEANO, contexto.popTipoFator());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -1072,7 +1970,7 @@ public class SemanticoTest {
 
 		semantico.executeAction(171, token());
 
-		assertEquals(ContextoEXPR.PAR_ATUAL, contexto.peekContextoEXPR());
+		assertEquals(ContextoEXPR.PAR_ATUAL, contexto.getContextoEXPR());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -1096,7 +1994,7 @@ public class SemanticoTest {
 
 		semantico.executeAction(172, token());
 
-		assertEquals(contexto.getTipoVar(), contexto.peekId().getTipo());
+		assertEquals(contexto.popTipoVar(), contexto.peekId().getTipo());
 	}
 
 	@Test
@@ -1113,23 +2011,23 @@ public class SemanticoTest {
 	}
 
 	@Test(expected=SemanticError.class)
-	public void action173DeveLancarExcecaoCasoTipoExprSejaDiferenteDeInteiro() throws Exception {
+	public void action173DeveLancarExcecaoCasoTipoExprEmpilhadaSejaDiferenteDeInteiro() throws Exception {
 		contexto.pushTipoExpr(Tipo.BOOLEANO);
 		semantico.executeAction(173, token());
 	}
 
 	@Test
-	public void action173DeveAlterarTipoVarParaCaracterCasoTipoExprSejaInteiroESubCategoriaVarIndexadaSejaCadeia() throws Exception {
+	public void action173DeveEmpilharCaracterEmTipoVarCasoTipoExprEmpilhadaSejaInteiroESubCategoriaVarIndexadaEmpilhadaSejaCadeia() throws Exception {
 		contexto.pushSubCategoriaVarIndexada(SubCategoria.CADEIA);
 		contexto.pushTipoExpr(Tipo.INTEIRO);
 
 		semantico.executeAction(173, token());
 
-		assertEquals(Tipo.CARACTER, contexto.getTipoVar());
+		assertEquals(Tipo.CARACTER, contexto.popTipoVar());
 	}
 
 	@Test
-	public void action173DeveAlterarTipoVarParaTipoDoVetorCasoTipoExprSejaInteiroESubCategoriaVarIndexadaSejaDiferenteDeCadeia() throws Exception {
+	public void action173DeveEmpilharTipoDoVetorEmTipoVarCasoTipoExprEmpilhadoSejaInteiroESubCategoriaVarIndexadaEmpilhadaSejaDiferenteDeCadeia() throws Exception {
 		contexto.pushSubCategoriaVarIndexada(SubCategoria.VETOR);
 		contexto.pushTipoExpr(Tipo.INTEIRO);
 		IdVariavel id = new IdVariavel(token().getLexeme());
@@ -1138,7 +2036,29 @@ public class SemanticoTest {
 
 		semantico.executeAction(173, token());
 
-		assertEquals(Tipo.BOOLEANO, contexto.getTipoVar());
+		assertEquals(Tipo.BOOLEANO, contexto.popTipoVar());
+	}
+
+	@Test(expected=EmptyStackException.class)
+	public void action173DeveDesempilharTipoExpr() throws Exception {
+		contexto.pushTipoExpr(Tipo.INTEIRO);
+		contexto.pushSubCategoriaVarIndexada(SubCategoria.PREDEFINIDO);
+		contexto.pushId(new Identificador(""));
+
+		semantico.executeAction(173, token());
+
+		contexto.peekTipoExpr();
+	}
+
+	@Test(expected=EmptyStackException.class)
+	public void action173DeveDesempilharSubCategoriaVarIndexada() throws Exception {
+		contexto.pushTipoExpr(Tipo.INTEIRO);
+		contexto.pushSubCategoriaVarIndexada(SubCategoria.PREDEFINIDO);
+		contexto.pushId(new Identificador(""));
+
+		semantico.executeAction(173, token());
+
+		contexto.peekSubCategoriaVarIndexada();
 	}
 
 	@Test(expected=SemanticError.class)
@@ -1168,7 +2088,7 @@ public class SemanticoTest {
 
 		semantico.executeAction(174, token());
 
-		assertEquals(id.getTipo(), contexto.getTipoVar());
+		assertEquals(id.getTipo(), contexto.popTipoVar());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -1198,7 +2118,7 @@ public class SemanticoTest {
 
 		semantico.executeAction(174, token());
 
-		assertEquals(contexto.peekId().getTipo(), contexto.getTipoVar());
+		assertEquals(contexto.peekId().getTipo(), contexto.popTipoVar());
 	}
 
 	@Test
@@ -1213,12 +2133,14 @@ public class SemanticoTest {
 	}
 
 	@Test
-	public void action174DeveAlterarTipoVarParaValorDeTipoConstCasoCategoriaDoIdAtualSejaConstante() throws Exception {
-		contexto.pushId(new IdConstante(token().getLexeme()));
+	public void action174DeveAlterarTipoVarParaTipoDoIdAtualCasoCategoriaDoIdAtualSejaConstante() throws Exception {
+		IdConstante id = new IdConstante(token().getLexeme());
+		id.setTipo(Tipo.BOOLEANO);
+		contexto.pushId(id);
 
 		semantico.executeAction(174, token());
 
-		assertEquals(contexto.getTipoConst(), contexto.getTipoVar());
+		assertEquals(id.getTipo(), contexto.popTipoVar());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -1356,7 +2278,11 @@ public class SemanticoTest {
 	}
 
 	private Token token() {
-		return new Token(1, "lexeme", 0);
+		return token("lexeme");
+	}
+
+	private Token token(String lexeme) {
+		return new Token(1, lexeme, 0);
 	}
 
 	private Identificador declararIdentificador(Categoria categoriaAtual, Token token) {

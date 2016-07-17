@@ -13,6 +13,9 @@ import br.ufsc.ctc.ine.sin.ine5622.model.Semantico;
 import br.ufsc.ctc.ine.sin.ine5622.model.Sintatico;
 import br.ufsc.ctc.ine.sin.ine5622.view.TelaPrincipal;
 
+/**
+ * Responsável por inicializar a aplicação
+ */
 public class Principal {
 
 	public static void main(String[] args) {

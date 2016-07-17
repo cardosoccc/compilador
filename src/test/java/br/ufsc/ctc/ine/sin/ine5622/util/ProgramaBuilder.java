@@ -11,13 +11,21 @@ public class ProgramaBuilder {
 	}
 
 	public ProgramaBuilder programa(String idPrograma) {
-		codigo = "programa " + idPrograma + ";\n";
+		codigo += "programa " + idPrograma + ";\n";
 		return this;
 	}
 
-	public ProgramaBuilder declaracao(String declaracao) {
-		codigo += declaracao + "\n";
+	public ProgramaBuilder linha(String linha) {
+		codigo += linha + "\n";
 		return this;
+	}
+
+	public ProgramaBuilder declaracao(String d) {
+		return linha(d);
+	}
+
+	public ProgramaBuilder comando(String c) {
+		return linha(c);
 	}
 
 	public ProgramaBuilder declaracaoVariavel(Tipo tipo, String... ids) {
@@ -34,31 +42,77 @@ public class ProgramaBuilder {
 		return this;
 	}
 
-	public ProgramaBuilder declaracaoVetor(Tipo tipo, int dimensao, String... ids) {
+	public ProgramaBuilder declaracaoVetor(Tipo tipo, String dimensao, String... ids) {
 		codigo += tipo.getNome() + "[" + dimensao + "] " ;
-		declaracaoIdentificadores(", ", ";\n", ids);
+		codigo += declaracaoIdentificadores(", ", ";\n", ids);
 		return this;
 	}
 
 
-	public ProgramaBuilder declaracaoCadeia(int dimensao, String... ids) {
+	public ProgramaBuilder declaracaoCadeia(String dimensao, String... ids) {
 		codigo += Tipo.CADEIA.getNome() + "[" + dimensao + "] " ;
-		declaracaoIdentificadores(", ", ";\n", ids);
+		codigo += declaracaoIdentificadores(", ", ";\n", ids);
 		return this;
 	}
 
-
-	public ProgramaBuilder bloco(String bloco) {
-		codigo += "{" + bloco + "}.";
+	public ProgramaBuilder declaracaoMetodo(String id, String parFormais, Tipo tipo) {
+		codigo += "metodo " + id;
+		codigo += parFormais == null ? "" : "(" + parFormais + ")";
+		codigo += (tipo == Tipo.NULO) ? "" : ( ": " + tipo.getNome() );
+		codigo += ";\n";
 		return this;
 	}
 
-	public ProgramaBuilder bloco() {
-		codigo += "{}.";
+	public ProgramaBuilder bloco(String b) {
+		codigo += "{\n" + b + "}";
+		return this;
+	}
+
+	public ProgramaBuilder blocoPrograma(String b) {
+		abreBloco();
+		comando(b);
+		fechaBlocoPrograma();
+		return this;
+	}
+
+	public ProgramaBuilder blocoPrograma() {
+		return blocoPrograma("");
+	}
+
+	public ProgramaBuilder blocoMetodo(String b) {
+		abreBloco();
+		comando(b);
+		fechaBlocoMetodo();
+		return this;
+	}
+
+	public ProgramaBuilder blocoMetodo() {
+		return blocoMetodo("");
+	}
+
+	public ProgramaBuilder abreBloco() {
+		codigo += "{\n";
+		return this;
+	}
+
+	public ProgramaBuilder fechaBlocoPrograma() {
+		codigo += "}.\n";
+		return this;
+	}
+
+	public ProgramaBuilder fechaBlocoMetodo() {
+		codigo += "};\n";
 		return this;
 	}
 
 	public String build() {
+		return codigo;
+	}
+
+	public String build(boolean debug) {
+		if (debug) {
+			System.out.println(codigo);
+		}
 		return codigo;
 	}
 

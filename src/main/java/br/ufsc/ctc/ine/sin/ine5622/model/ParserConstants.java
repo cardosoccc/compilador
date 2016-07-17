@@ -1,14 +1,16 @@
+/**
+ * @author Vitor Schweitzer e Caio Cardoso
+ * created on 2016/06/18
+ */
 package br.ufsc.ctc.ine.sin.ine5622.model;
 
-public interface ParserConstants
-{
+public interface ParserConstants {
     int START_SYMBOL = 58;
 
     int FIRST_NON_TERMINAL    = 58;
     int FIRST_SEMANTIC_ACTION = 92;
 
-    int[][] PARSER_TABLE =
-    {
+    int[][] PARSER_TABLE = {
         { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
         { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  1, -1, -1, -1, -1,  1,  1, -1, -1, -1,  1,  1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  1, -1, -1,  1, -1, -1, -1, -1 },
         { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  3, -1, -1, -1, -1,  2,  2, -1, -1, -1,  2,  2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  2, -1, -1,  3, -1, -1, -1, -1 },
@@ -45,8 +47,7 @@ public interface ParserConstants
         { -1, -1, 79, 80, 83, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 81, 82, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }
     };
 
-    int[][] PRODUCTIONS =
-    {
+    int[][] PRODUCTIONS = {
         {  28,   2, 193,   6,  59,   8 },
         {  60,  66,  72 },
         {  61,  62, 194,  63, 195,  65, 196,   6,  60 },
@@ -215,17 +216,17 @@ public interface ParserConstants
         "Era esperado nao, id, num_int, num_real, falso, verdadeiro, literal, \"-\" ou \"(\"", // <lista_expr>
         "Era esperado \",\"", // <rep_lexpr>
         "Era esperado nao, id, num_int, num_real, falso, verdadeiro, literal, \"-\" ou \"(\"", // <expressao>
-        "Era esperado \"=\", \"<\", ou \">\"", // <resto_expressao> inválido",
+        "Era esperado \"=\", \"<\", ou \">\"", // <resto_expressao> invÃ¡lido",
         "Era esperado \"=\", \"<\", ou \">\"", // <oprel>
         "Era esperado nao, id, num_int, num_real, falso, verdadeiro, literal, \"-\" ou \"(\"", // <expsimp>
         "Era esperado ou, \"+\", \"-\"", // <rep_expsimp>
         "Era esperado ou, \"+\", \"-\"", // <op_add>
         "Era esperado nao, id, num_int, num_real, falso, verdadeiro, literal, \"-\" ou \"(\"", // <termo>
-        "Era esperado div, e, \"*\" ou \"/\"", // <rep_termo> inválido",
-        "Era esperado div, e, \"*\" ou \"/\"", // <op_mult> inválido",
+        "Era esperado div, e, \"*\" ou \"/\"", // <rep_termo> invÃ¡lido",
+        "Era esperado div, e, \"*\" ou \"/\"", // <op_mult> invÃ¡lido",
         "Era esperado nao, id, num_int, num_real, falso, verdadeiro, literal, \"-\" ou \"(\"", // <fator>
-        "Era esperado \"[\" ou \"(\"", // <rvar> inválido",
-        "Era esperado id, num_int, num_real, falso, verdadeiro ou literal", // <constante> inválido",
-        "Era esperado num_int, num_real, falso, verdadeiro ou literal", // <constante_explicita> inválido"
+        "Era esperado \"[\" ou \"(\"", // <rvar> invÃ¡lido",
+        "Era esperado id, num_int, num_real, falso, verdadeiro ou literal", // <constante> invÃ¡lido",
+        "Era esperado num_int, num_real, falso, verdadeiro ou literal", // <constante_explicita> invÃ¡lido"
     };
 }

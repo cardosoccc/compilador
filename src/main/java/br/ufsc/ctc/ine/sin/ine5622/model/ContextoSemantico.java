@@ -1,11 +1,19 @@
+/**
+ * @author Vitor Schweitzer e Caio Cardoso
+ * created on 2016/06/18
+ */
 package br.ufsc.ctc.ine.sin.ine5622.model;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * Responsável por armazenar os valores de variáveis de contexo usadas durante a compilação
+ */
 public class ContextoSemantico {
 
+	// Variáveis de contexto simples
 	private ContextoLID contextoLID;
 	private Tipo tipoAtual;
 	private Categoria categoriaAtual;
@@ -17,27 +25,42 @@ public class ContextoSemantico {
 	private String valConst;
 	private int numElementos;
 	private int numParametrosFormais;
-	private IdMetodo idMetodoAtual;
-	private Mpp mpp;
+	private MetodoPassagem mpp;
 	private Tipo tipoMetodo;
 	private Tipo tipoLadoEsq;
-	private Tipo tipoVar;
+	private ContextoEXPR contextoEXPR;
+	private boolean opNega;
+	private boolean opUnario;
+
+	// Variáveis empilhadas para representar expressões aninhadas
+	private Stack<OperadorRel> pilhaOperadoresRel;
+	private Stack<OperadorAdd> pilhaOperadoresAdd;
+	private Stack<OperadorMult> pilhaOperadoresMult;
 	private Stack<Identificador> pilhaId;
-	private Stack<Tipo> tipoExpr;
-	private Stack<ContextoEXPR> pilhaContextoEXPR;
+	private Stack<IdMetodo> pilhaIdMetodo;
+	private Stack<Tipo> pilhaTipoExpr;
+	private Stack<Tipo> pilhaTipoExprSimples;
+	private Stack<Tipo> pilhaTipoTermo;
+	private Stack<Tipo> pilhaTipoFator;
+	private Stack<Tipo> pilhaTipoVar;
 	private Stack<ContextoMetodo> pilhaContextoMetodo;
 	private Stack<SubCategoria> pilhaSubCategoriaVarIndexada;
+	private Stack<Boolean> pilhaRetorne;
 
 	public ContextoSemantico() {
+		this.pilhaOperadoresRel = new Stack<OperadorRel>();
+		this.pilhaOperadoresAdd = new Stack<OperadorAdd>();
+		this.pilhaOperadoresMult = new Stack<OperadorMult>();
 		this.pilhaContextoMetodo = new Stack<ContextoMetodo>();
-		this.tipoExpr = new Stack<Tipo>();
-		this.pilhaContextoEXPR = new Stack<ContextoEXPR>();
+		this.pilhaIdMetodo = new Stack<IdMetodo>();
+		this.pilhaTipoExpr = new Stack<Tipo>();
+		this.pilhaTipoExprSimples = new Stack<Tipo>();
+		this.pilhaTipoTermo = new Stack<Tipo>();
+		this.pilhaTipoFator = new Stack<Tipo>();
+		this.pilhaTipoVar = new Stack<Tipo>();
 		this.pilhaId = new Stack<Identificador>();
 		this.pilhaSubCategoriaVarIndexada = new Stack<SubCategoria>();
-	}
-
-	public void limparContextoId() {
-		this.popId();
+		this.pilhaRetorne = new Stack<Boolean>();
 	}
 
 	public ContextoLID getContextoLID() {
@@ -62,7 +85,6 @@ public class ContextoSemantico {
 
 	public void setCategoriaAtual(Categoria categoriaAtual) {
 		this.categoriaAtual = categoriaAtual;
-
 	}
 
 	public void setSubCategoria(SubCategoria subCategoria) {
@@ -74,7 +96,7 @@ public class ContextoSemantico {
 	}
 
 	public void setPrimeiraPosicaoListaDeclaracao(int posicao) {
-		 this.primeiraPosicaoListaDeclaracao = posicao;
+		this.primeiraPosicaoListaDeclaracao = posicao;
 
 	}
 
@@ -134,20 +156,23 @@ public class ContextoSemantico {
 		this.numParametrosFormais += 1;
 	}
 
-	public IdMetodo getIdMetodoAtual() {
-		return idMetodoAtual;
+	public IdMetodo peekIdMetodo() {
+		return pilhaIdMetodo.peek();
 	}
 
-	public void setIdMetodoAtual(IdMetodo idMetodo) {
-		this.idMetodoAtual = idMetodo;
-
+	public IdMetodo popIdMetodo() {
+		return pilhaIdMetodo.pop();
 	}
 
-	public Mpp getMpp() {
+	public void pushIdMetodo(IdMetodo idMetodo) {
+		this.pilhaIdMetodo.push(idMetodo);
+	}
+
+	public MetodoPassagem getMpp() {
 		return this.mpp;
 	}
 
-	public void setMpp(Mpp mpp) {
+	public void setMpp(MetodoPassagem mpp) {
 		this.mpp = mpp;
 	}
 
@@ -174,27 +199,59 @@ public class ContextoSemantico {
 	}
 
 	public Tipo peekTipoExpr() {
-		return tipoExpr.peek();
+		return pilhaTipoExpr.peek();
 	}
 
 	public Tipo popTipoExpr() {
-		return tipoExpr.pop();
+		return pilhaTipoExpr.pop();
 	}
 
 	public void pushTipoExpr(Tipo tipoExpr) {
-		this.tipoExpr.push(tipoExpr);
+		this.pilhaTipoExpr.push(tipoExpr);
 	}
 
-	public ContextoEXPR peekContextoEXPR() {
-		return pilhaContextoEXPR.peek();
+	public Tipo peekTipoExprSimples() {
+		return pilhaTipoExprSimples.peek();
 	}
 
-	public ContextoEXPR popContextoEXPR() {
-		return pilhaContextoEXPR.pop();
+	public Tipo popTipoExprSimples() {
+		return pilhaTipoExprSimples.pop();
 	}
 
-	public void pushContextoEXPR(ContextoEXPR contextoEXPR) {
-		this.pilhaContextoEXPR.push(contextoEXPR);
+	public void pushTipoExprSimples(Tipo tipoExprSimples) {
+		this.pilhaTipoExprSimples.push(tipoExprSimples);
+	}
+
+	public Tipo peekTipoTermo() {
+		return pilhaTipoTermo.peek();
+	}
+
+	public Tipo popTipoTermo() {
+		return pilhaTipoTermo.pop();
+	}
+
+	public void pushTipoTermo(Tipo tipoTermo) {
+		this.pilhaTipoTermo.push(tipoTermo);
+	}
+
+	public Tipo peekTipoFator() {
+		return pilhaTipoFator.peek();
+	}
+
+	public Tipo popTipoFator() {
+		return pilhaTipoFator.pop();
+	}
+
+	public void pushTipoFator(Tipo tipoFator) {
+		this.pilhaTipoFator.push(tipoFator);
+	}
+
+	public ContextoEXPR getContextoEXPR() {
+		return contextoEXPR;
+	}
+
+	public void setContextoEXPR(ContextoEXPR contextoEXPR) {
+		this.contextoEXPR = contextoEXPR;
 	}
 
 	public Tipo getTipoLadoEsq() {
@@ -217,12 +274,16 @@ public class ContextoSemantico {
 		this.pilhaSubCategoriaVarIndexada.push(subCategoriaVarIndexada);
 	}
 
-	public Tipo getTipoVar() {
-		return tipoVar;
+	public Tipo peekTipoVar() {
+		return pilhaTipoVar.peek();
 	}
 
-	public void setTipoVar(Tipo tipoVar) {
-		this.tipoVar = tipoVar;
+	public Tipo popTipoVar() {
+		return pilhaTipoVar.pop();
+	}
+
+	public void pushTipoVar(Tipo tipoVar) {
+		this.pilhaTipoVar.push(tipoVar);
 	}
 
 	public ContextoMetodo peekContextoMetodo() {
@@ -235,6 +296,70 @@ public class ContextoSemantico {
 
 	public void pushContextoMetodo(ContextoMetodo contextoMetodo) {
 		this.pilhaContextoMetodo.push(contextoMetodo);
+	}
+
+	public OperadorRel popOperadorRel() {
+		return this.pilhaOperadoresRel.pop();
+	}
+
+	public OperadorRel peekOperadorRel() {
+		return this.pilhaOperadoresRel.peek();
+	}
+
+	public void pushOperadorRel(OperadorRel op) {
+		this.pilhaOperadoresRel.push(op);
+	}
+
+	public OperadorMult popOperadorMult() {
+		return this.pilhaOperadoresMult.pop();
+	}
+
+	public OperadorMult peekOperadorMult() {
+		return this.pilhaOperadoresMult.peek();
+	}
+
+	public void pushOperadorMult(OperadorMult op) {
+		this.pilhaOperadoresMult.push(op);
+	}
+
+	public OperadorAdd popOperadorAdd() {
+		return this.pilhaOperadoresAdd.pop();
+	}
+
+	public OperadorAdd peekOperadorAdd() {
+		return this.pilhaOperadoresAdd.peek();
+	}
+
+	public void pushOperadorAdd(OperadorAdd op) {
+		this.pilhaOperadoresAdd.push(op);
+	}
+
+	public Boolean popRetorne() {
+		return this.pilhaRetorne.pop();
+	}
+
+	public Boolean peekRetorne() {
+		return this.pilhaRetorne.peek();
+	}
+
+	public void pushRetorne(Boolean retorne) {
+		this.pilhaRetorne.push(retorne);
+	}
+
+	public boolean isOpNega() {
+		return opNega;
+	}
+
+	public void setOpNega(boolean opNega) {
+		this.opNega = opNega;
+	}
+
+	public boolean isOpUnario() {
+		return opUnario;
+	}
+
+	public void setOpUnario(boolean opUnario) {
+		this.opUnario = opUnario;
 	}
 
 }

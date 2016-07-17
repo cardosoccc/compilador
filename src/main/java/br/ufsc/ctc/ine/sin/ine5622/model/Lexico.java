@@ -1,137 +1,125 @@
+/**
+ * @author Vitor Schweitzer e Caio Cardoso
+ * created on 2016/06/18
+ */
 package br.ufsc.ctc.ine.sin.ine5622.model;
 
-public class Lexico implements Constants
-{
-    private int position;
-    private String input;
+/**
+ * Responsável por realizar a análise léxica
+ */
+public class Lexico implements Constants {
 
-    public Lexico()
-    {
-        this(new java.io.StringReader(""));
-    }
+	private int position;
+	private String input;
 
-    public Lexico(java.io.Reader input)
-    {
-        setInput(input);
-    }
+	public Lexico() {
+		this(new java.io.StringReader(""));
+	}
 
-    public void setInput(java.io.Reader input)
-    {
-        StringBuffer bfr = new StringBuffer();
-        try
-        {
-            int c = input.read();
-            while (c != -1)
-            {
-                bfr.append((char)c);
-                c = input.read();
-            }
-            this.input = bfr.toString();
-        }
-        catch (java.io.IOException e)
-        {
-            e.printStackTrace();
-        }
+	public Lexico(java.io.Reader input) {
+		setInput(input);
+	}
 
-        setPosition(0);
-    }
+	public void setInput(java.io.Reader input) {
+		StringBuffer bfr = new StringBuffer();
+		try {
+			int c = input.read();
+			while (c != -1) {
+				bfr.append((char) c);
+				c = input.read();
+			}
+			this.input = bfr.toString();
+		} catch (java.io.IOException e) {
+			e.printStackTrace();
+		}
 
-    public void setPosition(int pos)
-    {
-        position = pos;
-    }
+		setPosition(0);
+	}
 
-    public Token nextToken() throws LexicalError
-    {
-        if ( ! hasInput() )
-            return null;
+	public void setPosition(int pos) {
+		position = pos;
+	}
 
-        int start = position;
+	public Token nextToken() throws LexicalError {
+		if (!hasInput())
+			return null;
 
-        int state = 0;
-        int lastState = 0;
-        int endState = -1;
-        int end = -1;
+		int start = position;
 
-        while (hasInput())
-        {
-            lastState = state;
-            state = nextState(nextChar(), state);
+		int state = 0;
+		int lastState = 0;
+		int endState = -1;
+		int end = -1;
 
-            if (state < 0)
-                break;
+		while (hasInput()) {
+			lastState = state;
+			state = nextState(nextChar(), state);
 
-            else
-            {
-                if (tokenForState(state) >= 0)
-                {
-                    endState = state;
-                    end = position;
-                }
-            }
-        }
-        if (endState < 0 || (endState != state && tokenForState(lastState) == -2))
-            throw new LexicalError(SCANNER_ERROR[lastState], start);
+			if (state < 0)
+				break;
 
-        position = end;
+			else {
+				if (tokenForState(state) >= 0) {
+					endState = state;
+					end = position;
+				}
+			}
+		}
+		if (endState < 0 || (endState != state && tokenForState(lastState) == -2))
+			throw new LexicalError(SCANNER_ERROR[lastState], start);
 
-        int token = tokenForState(endState);
+		position = end;
 
-        if (token == 0)
-            return nextToken();
-        else
-        {
-            String lexeme = input.substring(start, end);
-            token = lookupToken(token, lexeme);
-            return new Token(token, lexeme, start);
-        }
-    }
+		int token = tokenForState(endState);
 
-    private int nextState(char c, int state)
-    {
-        int next = SCANNER_TABLE[state][c];
-        return next;
-    }
+		if (token == 0)
+			return nextToken();
+		else {
+			String lexeme = input.substring(start, end);
+			token = lookupToken(token, lexeme);
+			return new Token(token, lexeme, start);
+		}
+	}
 
-    private int tokenForState(int state)
-    {
-        if (state < 0 || state >= TOKEN_STATE.length)
-            return -1;
+	private int nextState(char c, int state) {
+		int next = SCANNER_TABLE[state][c];
+		return next;
+	}
 
-        return TOKEN_STATE[state];
-    }
+	private int tokenForState(int state) {
+		if (state < 0 || state >= TOKEN_STATE.length)
+			return -1;
 
-    public int lookupToken(int base, String key)
-    {
-        int start = SPECIAL_CASES_INDEXES[base];
-        int end   = SPECIAL_CASES_INDEXES[base+1]-1;
+		return TOKEN_STATE[state];
+	}
 
-        while (start <= end)
-        {
-            int half = (start+end)/2;
-            int comp = SPECIAL_CASES_KEYS[half].compareTo(key);
+	public int lookupToken(int base, String key) {
+		int start = SPECIAL_CASES_INDEXES[base];
+		int end = SPECIAL_CASES_INDEXES[base + 1] - 1;
 
-            if (comp == 0)
-                return SPECIAL_CASES_VALUES[half];
-            else if (comp < 0)
-                start = half+1;
-            else  //(comp > 0)
-                end = half-1;
-        }
+		while (start <= end) {
+			int half = (start + end) / 2;
+			int comp = SPECIAL_CASES_KEYS[half].compareTo(key);
 
-        return base;
-    }
+			if (comp == 0)
+				return SPECIAL_CASES_VALUES[half];
+			else if (comp < 0)
+				start = half + 1;
+			else // (comp > 0)
+				end = half - 1;
+		}
 
-    private boolean hasInput()
-    {
-        return position < input.length();
-    }
+		return base;
+	}
 
-    private char nextChar()
-    {
-        if (hasInput())
-            return input.charAt(position++);
-        else
-            return (char) -1;
-    }
+	private boolean hasInput() {
+		return position < input.length();
+	}
+
+	private char nextChar() {
+		if (hasInput())
+			return input.charAt(position++);
+		else
+			return (char) -1;
+	}
 }

@@ -15,6 +15,9 @@ import br.ufsc.ctc.ine.sin.ine5622.model.Semantico;
 import br.ufsc.ctc.ine.sin.ine5622.model.Sintatico;
 import br.ufsc.ctc.ine.sin.ine5622.model.Token;
 
+/**
+ * Respons√°vel por orquestrar a execu√ß√£o do compilador e enviar instru√ß√µes necess√°rias para a tela
+ */
 public class Gerente {
 
 	private ManipuladorArquivo ma;
@@ -40,24 +43,24 @@ public class Gerente {
 	}
 
 	/**
-	 * Manda salvar o conte˙do no mesmo arquivo diretÛrio que o arquivo atual,
-	 * caso n„o houver arquivo atual, ele retorna false para que a interface
-	 * peÁa um diretÛrio
+	 * Manda salvar o conte√∫do no mesmo arquivo diret√≥rio que o arquivo atual,
+	 * caso n√£o houver arquivo atual, ele retorna false para que a interface
+	 * pe√ßa um diret√≥rio
 	 *
 	 * @param conteudo
-	 *            Conte˙do a ser salvo no arquivo
+	 *            Conte√∫do a ser salvo no arquivo
 	 *
-	 * @return true caso conseguiu gravar, false caso n„o h· um arquivo atual
+	 * @return true caso conseguiu gravar, false caso n√£o h√° um arquivo atual
 	 */
 	public boolean salvarArquivo(String conteudo) {
 		return ma.salvarArquivo(conteudo);
 	}
 
 	/**
-	 * Salva o String em um arquivo especÌfico
+	 * Salva o String em um arquivo espec√≠fico
 	 *
 	 * @param file
-	 *            EndereÁo do arquivo
+	 *            Endere√ßo do arquivo
 	 *
 	 * @param conteudo
 	 *            String a ser gravado no arquivo
@@ -67,19 +70,19 @@ public class Gerente {
 	}
 
 	/**
-	 * Retorna o conte˙do do arquivo lido
+	 * Retorna o conte√∫do do arquivo lido
 	 *
-	 * @return Conte˙do do arquivo lido
+	 * @return Conte√∫do do arquivo lido
 	 */
 	public String getConteudoArquivo() {
 		return ma.getConteudoArquivo();
 	}
 
 	/**
-	 * Chama o analisador lÈxico
+	 * Chama o analisador l√©xico
 	 *
 	 * @param entrada
-	 *            texto do cÛdigo a ser analisado
+	 *            texto do c√≥digo a ser analisado
 	 *
 	 * @throws LexicalError
 	 */
@@ -92,10 +95,10 @@ public class Gerente {
 	}
 
 	/**
-	 * Chama o analisador lÈxico e sint·tico
+	 * Chama o analisador l√©xico e sint√°tico
 	 *
 	 * @param entrada
-	 *            texto do cÛdigo a ser analisado
+	 *            texto do c√≥digo a ser analisado
 	 *
 	 * @throws AnalysisError
 	 */
@@ -105,7 +108,7 @@ public class Gerente {
 	}
 
 	/**
-	 * InformaÁıes sobre o aplicativo
+	 * Informa√ß√µes sobre o aplicativo
 	 *
 	 * @return Mensagem a ser apresentada na tela do Sobre
 	 */

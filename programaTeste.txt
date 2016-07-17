@@ -1,6 +1,5 @@
 programa teste;
-
-inteiro x, y;
+real x, y;
 inteiro z = 10;
 booleano t;
 booleano u = falso;
@@ -8,37 +7,31 @@ booleano v = verdadeiro;
 real r = 3.33;
 caracter c = 'c';
 cadeia [10] s;
-
-metodo teste(ref a: inteiro; val b: booleano) : booleano;
+metodo f(ref a: inteiro; val b: booleano) : booleano;
 {
 	leia(s);
 	retorne verdadeiro;
 };
 {
 	#Teste de comentario
-
 	/*
 	escreva('Isso nao deve aparecer!')
 	*/
-
 	x := 1;
 	y := 12;
-	z := ((x + y - z * 1.0) / 2) div 1;
+	x := ((x + y - z * 1.0) / 2) / 1;
 	t := verdadeiro;
 	s := 'string';
 	s[0] := 'S';
-	s[x] := 'T';
+	s[1] := 'T';
 	t := nao (v e u ou u);
-
 	enquanto (y <> 13) faca {
 		escreva(s);
 		y := y+1;
 	};
-
 	se (x=11) entao {
 		escreva ('Coisa linda, substituiu!');
 	} senao {
 		escreva (x);
 	}
-
 }.

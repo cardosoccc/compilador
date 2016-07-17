@@ -5,15 +5,15 @@
 package br.ufsc.ctc.ine.sin.ine5622.model;
 
 /**
- * Representa os possíveis valores para o ContextoEXPR
+ * Representa o método de passagem de parâmetro
  */
-public enum ContextoEXPR {
+public enum MetodoPassagem {
 
-	IMPRESSAO("impressao"), PAR_ATUAL("par-atual");
+	VALOR("valor"), REFERENCIA("referencia");
 
 	private String nome;
 
-	ContextoEXPR(String nome) {
+	MetodoPassagem(String nome) {
 		this.nome = nome;
 	}
 

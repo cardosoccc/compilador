@@ -12,6 +12,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ *	Respons√°vel por carregar/salvar arquivo em disco
+ */
 public class ManipuladorArquivo {
 
 	private File file;
@@ -65,13 +68,13 @@ public class ManipuladorArquivo {
 	}
 
 	/**
-	 * Salva arquivo j· existente
+	 * Salva arquivo j√° existente
 	 */
 	public boolean salvarArquivo(String conteudo) {
 		System.out.println(conteudo);
 		if (!(this.getFile() == null)) {
 			salvarArquivoComo(this.getFile(), conteudo);
-			return true; // trocar depois por exceÁ„o
+			return true; // trocar depois por exce√ß√£o
 		} else {
 			return false;
 		}
@@ -100,8 +103,7 @@ public class ManipuladorArquivo {
 	}
 
 	/**
-	 * Substitui o \n do textArea pela quebra de linha aceita pelo SO. Windows È
-	 * \r\n
+	 * Substitui o \n do textArea pela quebra de linha aceita pelo SO. Windows √© \r\n
 	 */
 	public String ajusteQuebraDeLinha(String entrada) {
 		return entrada.replaceAll("\n", System.lineSeparator());

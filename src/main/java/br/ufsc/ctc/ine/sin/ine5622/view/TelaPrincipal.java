@@ -24,6 +24,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 
+/**
+ * Respons√°vel por renderizar os componentes gr√°ficos da aplica√ß√£o
+ */
 public class TelaPrincipal {
 
 	private JFrame frmCompiladorLsi;
@@ -147,7 +150,7 @@ public class TelaPrincipal {
 	public void analiseLexica (String conteudo) {
 		try {
 			gerente.analisadorLexico(conteudo);
-			informeUsuario("Nenhum erro lÈxico.");
+			informeUsuario("Nenhum erro l√©xico.");
 		} catch (LexicalError e) {
 			tratarErroDeAnalise(e);
 		}
@@ -156,24 +159,24 @@ public class TelaPrincipal {
 	public void analiseSintatica(String conteudo) {
 		try {
 			gerente.analisadorSintatico(conteudo);
-			informeUsuario("Nenhum erro lÈxico ou sint·tico.");
+			informeUsuario("Nenhum erro l√©xico ou sint√°tico.");
 		} catch (AnalysisError e) {
 			tratarErroDeAnalise(e);
 		}
 	}
 
 	/**
-	 * Verifica tipo de erro e monta mensagem para o usu·rio
+	 * Verifica tipo de erro e monta mensagem para o usu√°rio
 	 */
 	private void tratarErroDeAnalise(AnalysisError e) {
 		if (e.getPosition() >= 0) {
 			this.textArea.setCaretPosition(e.getPosition());
 		}
 		String mensagem = "Encontrado um erro ";
-		mensagem += (e instanceof LexicalError)  ? "lÈxico" :
-					(e instanceof SyntaticError) ? "sint·tico" :
-					(e instanceof SemanticError) ? "sem‚ntico" : "";
-		mensagem += ":\n\n" + "Msg: " + e.getMessage() + "\nPosiÁ„o: " + e.getPosition();
+		mensagem += (e instanceof LexicalError)  ? "l√©xico" :
+					(e instanceof SyntaticError) ? "sint√°tico" :
+					(e instanceof SemanticError) ? "sem√¢ntico" : "";
+		mensagem += ":\n\n" + "Msg: " + e.getMessage() + "\nPosi√ß√£o: " + e.getPosition();
 		this.informeUsuario(mensagem);
 	}
 
@@ -190,12 +193,12 @@ public class TelaPrincipal {
 			gerente.carregarArquivo(fc.getSelectedFile());
 			return true;
 		} else if (returnVal == JFileChooser.ERROR_OPTION)
-			JOptionPane.showMessageDialog(this.frmCompiladorLsi, "Arquivo inv·lido");
+			JOptionPane.showMessageDialog(this.frmCompiladorLsi, "Arquivo inv√°lido");
 		return false;
 	}
 
 	/**
-	 * Salvar arquivo j· existente
+	 * Salvar arquivo j√° existente
 	 */
 	public void salvarArquivo(String conteudo) {
 		boolean resultadoSalvar = gerente.salvarArquivo(conteudo);
@@ -219,27 +222,27 @@ public class TelaPrincipal {
 				JOptionPane.showMessageDialog(this.frmCompiladorLsi, "Arquivo criado com sucesso");
 			} else {
 				int opcaoSubstituir = JOptionPane.showConfirmDialog(this.frmCompiladorLsi,
-						"Este arquivo j· existe, deseja substituÌ-lo?", "Arquivo existente", JOptionPane.YES_NO_OPTION);
+						"Este arquivo j√° existe, deseja substitu√≠-lo?", "Arquivo existente", JOptionPane.YES_NO_OPTION);
 				if (opcaoSubstituir == JOptionPane.YES_OPTION) {
 					gerente.salvarArquivoComo(fc.getSelectedFile(), conteudo);
 					// Validar com try ou return
 					JOptionPane.showMessageDialog(this.frmCompiladorLsi, "Arquivo substituido com sucesso");
 				} else
-					JOptionPane.showMessageDialog(this.frmCompiladorLsi, "Arquivo n„o foi salvo");
+					JOptionPane.showMessageDialog(this.frmCompiladorLsi, "Arquivo n√£o foi salvo");
 			}
 		} else if (returnVal == JFileChooser.ERROR_OPTION)
 			JOptionPane.showMessageDialog(this.frmCompiladorLsi, "Ero ao selecionar arquivo");
 	}
 
 	/**
-	 * Apresentar mensagens ao usu·rio
+	 * Apresentar mensagens ao usu√°rio
 	 */
 	public void informeUsuario (String mensagem){
 		JOptionPane.showMessageDialog(this.getFrame(), mensagem);
 	}
 
 	/**
-	 * Busca e mostra as informaÁıes do aplicativo
+	 * Busca e mostra as informa√ß√µes do aplicativo
 	 */
 	private void informacoesAplicativo() {
 		informeUsuario(gerente.informacoesAplicativo());

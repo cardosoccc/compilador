@@ -1,5 +1,12 @@
+/**
+ * @author Vitor Schweitzer e Caio Cardoso
+ * created on 2016/06/18
+ */
 package br.ufsc.ctc.ine.sin.ine5622.model;
 
+/**
+ * Representa um identificador utilizado durante o processo de compilação
+ */
 public class Identificador {
 
 	private String nome;
@@ -7,6 +14,7 @@ public class Identificador {
 	private int deslocamento;
 	private int tamanho;
 	private Tipo tipo;
+	private SubCategoria subCategoria;
 
 	public Identificador(String nome) {
 		this.nome = nome;
@@ -53,5 +61,12 @@ public class Identificador {
 		return tipo;
 	}
 
+	public SubCategoria getSubCategoria() {
+		return subCategoria;
+	}
+
+	public void setSubCategoria(SubCategoria subCategoria) {
+		this.subCategoria = subCategoria;
+	}
 
 }
