@@ -16,15 +16,17 @@ import java.util.Map;
  */
 public class TabelaDeSimbolos {
 
-	private int deslocamento;
 	private int nivelAtual;
 
 	/** A tabela de símbolos propriamente dita */
 	private Map<Integer, Map<String, Identificador>> identificadoresPorNivel;
 
+	/** O deslocamento atual em cada nível */
+	private Map<Integer, Integer> deslocamentoPorNivel;
+
 	public TabelaDeSimbolos() {
 		this.nivelAtual = 0;
-		this.deslocamento = 0;
+		this.deslocamentoPorNivel = new HashMap<Integer, Integer>();
 		this.identificadoresPorNivel = new HashMap<Integer, Map<String, Identificador>>();
 	}
 
@@ -35,28 +37,34 @@ public class TabelaDeSimbolos {
 	 */
 	public void incluirIdentificador(Identificador id) {
 		id.setNivel(this.nivelAtual);
-		id.setDeslocamento(this.deslocamento);
-		if (identificadoresPorNivel.containsKey(nivelAtual)) {
-			identificadoresPorNivel.get(this.nivelAtual).put(id.getNome(), id);
+
+		if (this.identificadoresPorNivel.containsKey(nivelAtual)) {
+			this.identificadoresPorNivel.get(this.nivelAtual).put(id.getNome(), id);
 		} else {
 			HashMap<String, Identificador> tabelaNivel = new HashMap<String, Identificador>();
 			tabelaNivel.put(id.getNome(), id);
-			identificadoresPorNivel.put(this.nivelAtual, tabelaNivel);
+			this.identificadoresPorNivel.put(this.nivelAtual, tabelaNivel);
+			this.deslocamentoPorNivel.put(this.nivelAtual, 0);
 		}
-		this.deslocamento += id.getTamanho();
+
+		int deslocamento = getDeslocamento();
+		id.setDeslocamento(deslocamento);
+		setDeslocamento(deslocamento + id.getTamanho());
 	}
 
+	public int getDeslocamento() {
+		if (!identificadoresPorNivel.containsKey(nivelAtual)) {
+			this.deslocamentoPorNivel.put(this.nivelAtual, 0);
+		}
+		return this.deslocamentoPorNivel.get(this.nivelAtual);
+	}
 
 	public void setDeslocamento(int deslocamento) {
-		this.deslocamento = deslocamento;
+		this.deslocamentoPorNivel.put(this.nivelAtual, deslocamento);
 	}
 
 	public void setNivelAtual(int nivelAtual) {
 		this.nivelAtual = nivelAtual;
-	}
-
-	public int getDeslocamento() {
-		return this.deslocamento;
 	}
 
 	public int getNivelAtual() {
@@ -80,7 +88,7 @@ public class TabelaDeSimbolos {
 	}
 
 	/**
-	 * Retorna um idetificador em um determinado nível
+	 * Retorna um identificador em um determinado nível
 	 *
 	 * @param idName o lexeme do token que representa o identificador
 	 * @param nivel o nível desejado
@@ -103,10 +111,11 @@ public class TabelaDeSimbolos {
 	}
 
 	/**
-	 * Remove todos os símbolos do nível atual
+	 * Remove todos os símbolos e o limpa o deslocamento do nível atual
 	 */
 	public void limparNivelAtual() {
 		this.identificadoresPorNivel.remove(this.nivelAtual);
+		this.deslocamentoPorNivel.remove(this.nivelAtual);
 	}
 
 }
