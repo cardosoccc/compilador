@@ -195,9 +195,9 @@ public interface ParserConstants {
         "Era esperado retorne",
         "Era esperado div",
         "Era esperado programa ",// <programa>
-        "Era esperado inteiro, real, booleano, caracter ou cadeia ",// <bloco>
-        "Era esperado inteiro, real, booleano, caracter ou cadeia ",// <dcl_var_const>
-        "Era esperado inteiro, real, booleano, caracter ou cadeia ",// <<tipo>
+        "Era esperado \"{\", caracter, cadeia, inteiro, booleano, real ou metodo ",// <bloco>
+        "Era esperado caracter, cadeia, inteiro, booleano ou real ",// <dcl_var_const>
+        "Era esperado caracter, cadeia, inteiro, booleano ou real ",// <<tipo>
         "Era esperado \"[\"",// <dimensao>
         "Era esperado id",// <lid>",
         "Era esperado \",\"",// <rep_lid>
@@ -210,13 +210,13 @@ public interface ParserConstants {
         "Era esperado ref ou val", //<mp_par>
         "Era esperado \"{\"", // <com_composto>
         "Era esperado \";\"", // <replistacomando>
-        "Era esperado id, se, enquanto, leia, escreva, retorne ou \";\"", // <comando>
+        "Era esperado id, \"{\", se, leia, escreva, enquanto ou retorne", // <comando>
         "Era esperado senao", // <senaoparte>
         "Era esperado \":=\", \"[\", ou \"(\"", // <rcomid>
         "Era esperado nao, id, num_int, num_real, falso, verdadeiro, literal, \"-\" ou \"(\"", // <lista_expr>
         "Era esperado \",\"", // <rep_lexpr>
         "Era esperado nao, id, num_int, num_real, falso, verdadeiro, literal, \"-\" ou \"(\"", // <expressao>
-        "Era esperado \"=\", \"<\", ou \">\"", // <resto_expressao> inválido",
+        "Era esperado \"=\", \"<\", ou \">\"", // <resto_expressao>,
         "Era esperado \"=\", \"<\", ou \">\"", // <oprel>
         "Era esperado nao, id, num_int, num_real, falso, verdadeiro, literal, \"-\" ou \"(\"", // <expsimp>
         "Era esperado ou, \"+\", \"-\"", // <rep_expsimp>

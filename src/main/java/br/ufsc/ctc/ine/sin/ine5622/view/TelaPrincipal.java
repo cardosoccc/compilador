@@ -108,7 +108,7 @@ public class TelaPrincipal {
 	}
 
 	private void configurarBotaoAnaliseLexica(JMenuBar menuBar) {
-		JMenu mnLxico = new JMenu("L\u00E9xico");
+		JMenu mnLxico = new JMenu("Léxico");
 		menuBar.add(mnLxico);
 		JMenuItem mntmAnalisar = new JMenuItem("Analisar");
 		mntmAnalisar.addMouseListener(new MouseAdapter() {
@@ -121,7 +121,7 @@ public class TelaPrincipal {
 	}
 
 	private void configurarBotaoAnaliseSintatica(JMenuBar menuBar) {
-		JMenu mnSinttico = new JMenu("Sint\u00E1tico");
+		JMenu mnSinttico = new JMenu("Sintático/Semântico");
 		menuBar.add(mnSinttico);
 		JMenuItem mntmAnalisar_1 = new JMenuItem("Analisar");
 		mntmAnalisar_1.addMouseListener(new MouseAdapter() {
