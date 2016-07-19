@@ -194,7 +194,7 @@ public class Semantico implements Constants {
 	}
 
 	public void action115(Token token) throws SemanticError {
-		if (!contextoSemantico.getTipoConst().equals(contextoSemantico.getTipoAtual())) {
+		if (!tiposCompativeis(contextoSemantico.getTipoAtual(), contextoSemantico.getTipoConst())) {
 			throw new SemanticError("Tipo da constante incorreto", token.getPosition());
 		}
 	}

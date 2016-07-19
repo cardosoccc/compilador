@@ -479,7 +479,7 @@ public class SemanticoTest {
 
 	@Test(expected=SemanticError.class)
 	public void action115DeveLancarExcecaoCasoTipoConstSejaDiferenteDeTipoAtual() throws Exception {
-		contexto.setTipoConst(Tipo.INTEIRO);
+		contexto.setTipoConst(Tipo.BOOLEANO);
 		contexto.setTipoAtual(Tipo.REAL);
 		semantico.executeAction(115, token());
 	}
