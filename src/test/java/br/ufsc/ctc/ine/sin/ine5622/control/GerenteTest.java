@@ -1065,7 +1065,7 @@ public class GerenteTest {
 	}
 
 	@Test
-	public void atribuicaoDeexpressaoLogica() throws Exception {
+	public void atribuicaoDeExpressaoLogica() throws Exception {
 		gerente.analisadorSintatico(programa()
 				.declaracaoVariavel(Tipo.BOOLEANO, "t")
 				.declaracaoConstante(Tipo.BOOLEANO, "falso", "u")
@@ -1076,6 +1076,23 @@ public class GerenteTest {
 				.comando("t := nao (u e verdadeiro);")
 				.fechaBlocoPrograma()
 				.build());
+	}
+
+	@Test
+	public void declaracaoDeMetodoAninhadaComVariavelDeclaradaNovamente() throws Exception {
+		gerente.analisadorSintatico(programa()
+				.declaracaoVariavel(Tipo.REAL, "a")
+				.declaracaoMetodo("f", "val b:inteiro", Tipo.REAL)
+				.declaracaoVariavel(Tipo.REAL, "a")
+				.declaracaoMetodo("g", "ref c:real", Tipo.REAL)
+				.blocoMetodo("retorne 1.1")
+				.abreBloco()
+				.comando("retorne 1.0")
+				.fechaBlocoMetodo()
+				.abreBloco()
+				.comando("a := 1.0;")
+				.fechaBlocoPrograma()
+				.build(true));
 	}
 
 	private ProgramaBuilder programa() {

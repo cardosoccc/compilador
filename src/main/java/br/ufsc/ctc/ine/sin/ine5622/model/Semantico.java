@@ -152,8 +152,8 @@ public class Semantico implements Constants {
 
 	public void action113(Token token) throws SemanticError {
 		ContextoLID contextoLID = contextoSemantico.getContextoLID();
-		Identificador id = tabelaDeSimbolos.getIdentificador(token.getLexeme());
 		if (contextoLID.equals(ContextoLID.DECL)) {
+			Identificador id = tabelaDeSimbolos.getIdentificador(token.getLexeme(), tabelaDeSimbolos.getNivelAtual());
 			if (id != null) {
 				throw new SemanticError("Id já declarado", token.getPosition());
 			} else {
@@ -162,6 +162,7 @@ public class Semantico implements Constants {
 				tabelaDeSimbolos.incluirIdentificador(id);
 			}
 		} else if (contextoLID.equals(ContextoLID.PAR_FORMAL)) {
+			Identificador id = tabelaDeSimbolos.getIdentificador(token.getLexeme(), tabelaDeSimbolos.getNivelAtual());
 			if (id != null) {
 				throw new SemanticError("Id de parâmetro repetido", token.getPosition());
 			} else {
@@ -171,6 +172,7 @@ public class Semantico implements Constants {
 				tabelaDeSimbolos.incluirIdentificador(id);
 			}
 		} else if (contextoLID.equals(ContextoLID.LEITURA)) {
+			Identificador id = tabelaDeSimbolos.getIdentificador(token.getLexeme());
 			if (id == null) {
 				throw new SemanticError("Id não declarado", token.getPosition());
 			} else if (!categoriaValidaParaLeitura(id)) {
