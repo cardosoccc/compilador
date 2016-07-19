@@ -25,7 +25,7 @@ public class ContextoSemantico {
 	private String valConst;
 	private int numElementos;
 	private int numParametrosFormais;
-	private MetodoPassagem mpp;
+	private MetodoPassagem metodoPassagem;
 	private Tipo tipoMetodo;
 	private Tipo tipoLadoEsq;
 	private ContextoEXPR contextoEXPR;
@@ -168,12 +168,12 @@ public class ContextoSemantico {
 		this.pilhaIdMetodo.push(idMetodo);
 	}
 
-	public MetodoPassagem getMpp() {
-		return this.mpp;
+	public MetodoPassagem getMetodoPassagem() {
+		return this.metodoPassagem;
 	}
 
-	public void setMpp(MetodoPassagem mpp) {
-		this.mpp = mpp;
+	public void setMetodoPassagem(MetodoPassagem metodoPassagem) {
+		this.metodoPassagem = metodoPassagem;
 	}
 
 	public Tipo getTipoMetodo() {

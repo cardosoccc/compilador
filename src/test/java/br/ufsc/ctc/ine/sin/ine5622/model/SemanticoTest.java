@@ -653,7 +653,7 @@ public class SemanticoTest {
 		tabela.incluirIdentificador(idAntes);
 		IdMetodo idMetodo = new IdMetodo("metodo");
 		contexto.pushIdMetodo(idMetodo);
-		contexto.setMpp(MetodoPassagem.VALOR);
+		contexto.setMetodoPassagem(MetodoPassagem.VALOR);
 
 		semantico.executeAction(123, token);
 
@@ -720,13 +720,13 @@ public class SemanticoTest {
 	@Test
 	public void action126DeveAlterarMppParaReferencia() throws Exception {
 		semantico.executeAction(126, token());
-		assertEquals(MetodoPassagem.REFERENCIA, contexto.getMpp());
+		assertEquals(MetodoPassagem.REFERENCIA, contexto.getMetodoPassagem());
 	}
 
 	@Test
 	public void action127DeveAlterarMppParaValor() throws Exception {
 		semantico.executeAction(127, token());
-		assertEquals(MetodoPassagem.VALOR, contexto.getMpp());
+		assertEquals(MetodoPassagem.VALOR, contexto.getMetodoPassagem());
 	}
 
 	@Test(expected=SemanticError.class)

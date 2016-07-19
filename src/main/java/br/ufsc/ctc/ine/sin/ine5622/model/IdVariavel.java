@@ -9,8 +9,6 @@ package br.ufsc.ctc.ine.sin.ine5622.model;
  */
 public class IdVariavel extends Identificador {
 
-	private SubCategoria subCategoria;
-
 	public IdVariavel(String nome) {
 		super(nome);
 	}
@@ -25,14 +23,6 @@ public class IdVariavel extends Identificador {
 		this.setDeslocamento(id.getDeslocamento());
 		this.setNivel(id.getNivel());
 		this.setTamanho(id.getTamanho());
-	}
-
-	public SubCategoria getSubCategoria() {
-		return subCategoria;
-	}
-
-	public void setSubCategoria(SubCategoria subCategoria) {
-		this.subCategoria = subCategoria;
 	}
 
 }

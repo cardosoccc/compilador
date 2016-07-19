@@ -253,7 +253,7 @@ public class Semantico implements Constants {
 			for (Identificador id : listaDeclaracao) {
 				IdParametro idParametro = new IdParametro(id);
 				idParametro.setTipo(contextoSemantico.getTipoAtual());
-				idParametro.setMpp(contextoSemantico.getMpp());
+				idParametro.setMpp(contextoSemantico.getMetodoPassagem());
 				IdMetodo idMetodo = contextoSemantico.peekIdMetodo();
 				idMetodo.incluirParametro(idParametro);
 				tabelaDeSimbolos.incluirIdentificador(idParametro);
@@ -274,11 +274,11 @@ public class Semantico implements Constants {
 	}
 
 	public void action126(Token token) throws SemanticError {
-		contextoSemantico.setMpp(MetodoPassagem.REFERENCIA);
+		contextoSemantico.setMetodoPassagem(MetodoPassagem.REFERENCIA);
 	}
 
 	public void action127(Token token) throws SemanticError {
-		contextoSemantico.setMpp(MetodoPassagem.VALOR);
+		contextoSemantico.setMetodoPassagem(MetodoPassagem.VALOR);
 	}
 
 	public void action128(Token token) throws SemanticError {

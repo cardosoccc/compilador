@@ -10,7 +10,6 @@ package br.ufsc.ctc.ine.sin.ine5622.model;
 public class IdParametro extends Identificador {
 
 	private MetodoPassagem mpp;
-	private SubCategoria subCategoria;
 
 	public IdParametro(String nome) {
 		super(nome);
@@ -35,14 +34,6 @@ public class IdParametro extends Identificador {
 
 	public void setMpp(MetodoPassagem mpp) {
 		this.mpp = mpp;
-	}
-
-	public SubCategoria getSubCategoria() {
-		return subCategoria;
-	}
-
-	public void setSubCategoria(SubCategoria subCategoria) {
-		this.subCategoria = subCategoria;
 	}
 
 }
