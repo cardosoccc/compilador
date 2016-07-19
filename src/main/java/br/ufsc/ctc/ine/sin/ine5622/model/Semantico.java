@@ -402,7 +402,6 @@ public class Semantico implements Constants {
 
 	public void action140(Token token) throws SemanticError {
 		Identificador id = contextoSemantico.popId();
-		System.out.println(id.getNome());
 		if (!(id instanceof IdMetodo)) {
 			throw new SemanticError("Id Deveria ser um método", token.getPosition());
 		} else if (id.getTipo() != Tipo.NULO) {
@@ -436,7 +435,6 @@ public class Semantico implements Constants {
 
 			if (idParametro.getMpp() == MetodoPassagem.REFERENCIA) {
 				Identificador id = tabelaDeSimbolos.getIdentificador(token.getLexeme());
-				System.out.println(token.getLexeme());
 				if (id == null) {
 					throw new SemanticError("Identificador não declarado", token.getPosition());
 				}
