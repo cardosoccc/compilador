@@ -1031,7 +1031,7 @@ public class GerenteTest {
 	}
 
 	@Test
-	public void declaracaoDeMetodoAninhadaComUtilizcaoDoEscopoExterno() throws Exception {
+	public void declaracaoDeMetodoAninhadaComUtilizacaoDoEscopoExterno() throws Exception {
 		gerente.analisadorSintatico(programa()
 				.declaracaoVariavel(Tipo.REAL, "a")
 				.declaracaoMetodo("f", "val b:inteiro", Tipo.REAL)
@@ -1044,7 +1044,7 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("a := f(1);")
 				.fechaBlocoPrograma()
-				.build());
+				.build(true));
 	}
 
 	@Test(expected=SemanticError.class)
@@ -1076,6 +1076,114 @@ public class GerenteTest {
 				.comando("t := nao (u e verdadeiro);")
 				.fechaBlocoPrograma()
 				.build());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void expressaoSendoPassadaComoParametroReferenciaIdDepois() throws Exception {
+		gerente.analisadorSintatico(programa()
+				.declaracaoVariavel(Tipo.INTEIRO, "a")
+				.declaracaoMetodo("f", "ref x:inteiro", Tipo.NULO)
+				.blocoMetodo()
+				.abreBloco()
+				.comando("f(1+a)")
+				.fechaBlocoPrograma()
+				.build(true));
+	}
+
+	@Test(expected=SemanticError.class)
+	public void expressaoSendoPassadaComoParametroReferenciaSomaDuasVariaveis() throws Exception {
+		gerente.analisadorSintatico(programa()
+				.declaracaoVariavel(Tipo.INTEIRO, "a")
+				.declaracaoMetodo("f", "ref x:inteiro", Tipo.NULO)
+				.blocoMetodo()
+				.abreBloco()
+				.comando("f(a+a)")
+				.fechaBlocoPrograma()
+				.build(true));
+	}
+
+	@Test(expected=SemanticError.class)
+	public void expressaoSendoPassadaComoParametroReferenciaMutiplicaDuasVariaveis() throws Exception {
+		gerente.analisadorSintatico(programa()
+				.declaracaoVariavel(Tipo.INTEIRO, "a")
+				.declaracaoMetodo("f", "ref x:inteiro", Tipo.NULO)
+				.blocoMetodo()
+				.abreBloco()
+				.comando("f(a*a)")
+				.fechaBlocoPrograma()
+				.build(true));
+	}
+
+	@Test(expected=SemanticError.class)
+	public void expressaoSendoPassadaComoParametroReferenciaComparaDuasVariaveis() throws Exception {
+		gerente.analisadorSintatico(programa()
+				.declaracaoVariavel(Tipo.BOOLEANO, "a")
+				.declaracaoMetodo("f", "ref x:booleano", Tipo.NULO)
+				.blocoMetodo()
+				.abreBloco()
+				.comando("f(a=a)")
+				.fechaBlocoPrograma()
+				.build(true));
+	}
+
+	@Test(expected=SemanticError.class)
+	public void expressaoSendoPassadaComoParametroReferenciaIdAntes() throws Exception {
+		gerente.analisadorSintatico(programa()
+				.declaracaoVariavel(Tipo.INTEIRO, "a")
+				.declaracaoMetodo("f", "ref x:inteiro", Tipo.NULO)
+				.blocoMetodo()
+				.abreBloco()
+				.comando("f(a+1)")
+				.fechaBlocoPrograma()
+				.build(true));
+	}
+
+	@Test(expected=SemanticError.class)
+	public void expressaoSendoPassadaComoSegundoParametro() throws Exception {
+		gerente.analisadorSintatico(programa()
+				.declaracaoVariavel(Tipo.INTEIRO, "a")
+				.declaracaoMetodo("f", "ref x:inteiro; ref y:inteiro", Tipo.NULO)
+				.blocoMetodo()
+				.abreBloco()
+				.comando("f(a, 1+a)")
+				.fechaBlocoPrograma()
+				.build(true));
+	}
+
+	@Test(expected=SemanticError.class)
+	public void expressaoSendoPassadaComoTerceiroParametro() throws Exception {
+		gerente.analisadorSintatico(programa()
+				.declaracaoVariavel(Tipo.INTEIRO, "a")
+				.declaracaoMetodo("f", "ref x:inteiro; val y:inteiro; ref z:inteiro", Tipo.NULO)
+				.blocoMetodo()
+				.abreBloco()
+				.comando("f(a, a, -a)")
+				.fechaBlocoPrograma()
+				.build(true));
+	}
+
+	@Test
+	public void variavelSendoPassadaComoPrimeiroETerceiroParametro() throws Exception {
+		gerente.analisadorSintatico(programa()
+				.declaracaoVariavel(Tipo.INTEIRO, "a")
+				.declaracaoMetodo("f", "ref x:inteiro; val y:inteiro; ref z:inteiro", Tipo.NULO)
+				.blocoMetodo()
+				.abreBloco()
+				.comando("f(a, a+1, a)")
+				.fechaBlocoPrograma()
+				.build(true));
+	}
+
+	@Test
+	public void variavelSendoPassadaComoSegundoParametro() throws Exception {
+		gerente.analisadorSintatico(programa()
+				.declaracaoVariavel(Tipo.INTEIRO, "a")
+				.declaracaoMetodo("f", "val x:inteiro; ref y:inteiro; val z:inteiro", Tipo.NULO)
+				.blocoMetodo()
+				.abreBloco()
+				.comando("f(a+1, a, (a))")
+				.fechaBlocoPrograma()
+				.build(true));
 	}
 
 	@Test

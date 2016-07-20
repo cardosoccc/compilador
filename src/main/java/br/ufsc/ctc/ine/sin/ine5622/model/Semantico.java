@@ -390,6 +390,7 @@ public class Semantico implements Constants {
 		ContextoMetodo contextoMetodo = new ContextoMetodo();
 		contextoSemantico.pushContextoMetodo(contextoMetodo);
 		contextoSemantico.setContextoEXPR(ContextoEXPR.PAR_ATUAL);
+		contextoSemantico.setReferenciaInvalida(false);
 	}
 
 	public void action139(Token token) throws SemanticError {
@@ -431,21 +432,23 @@ public class Semantico implements Constants {
 			IdParametro idParametro = idMetodo.getParametros().get(indiceParametro);
 			Tipo tipoParametro = idParametro.getTipo();
 			if (!tiposCompativeis(tipoParametro, tipoExpr)) {
-				throw new SemanticError("Esperava-se parâmetro do tipo '" + tipoParametro.getNome() + "', ao invés de '"
-						+ tipoExpr.getNome() + "'", token.getPosition());
+				throw new SemanticError("Esperava-se parâmetro do tipo '" + tipoParametro.getNome() + "', ao invés de '" + tipoExpr.getNome() + "'", token.getPosition());
 			}
 
 			if (idParametro.getMpp() == MetodoPassagem.REFERENCIA) {
+				if (contextoSemantico.isReferenciaInvalida()) {
+					throw new SemanticError("Parâmetro com método de passagem referência deve ser id variável ou parâmetro", token.getPosition());
+				}
+
 				Identificador id = tabelaDeSimbolos.getIdentificador(token.getLexeme());
 				if (id == null) {
 					throw new SemanticError("Identificador não declarado", token.getPosition());
 				}
 				if (!categoriaValidaParaLeitura(id)) {
-					throw new SemanticError(
-							"Parâmetro com método de passagem referência devem ser de categoria variável ou parâmetro",
-							token.getPosition());
+					throw new SemanticError("Parâmetro com método de passagem referência deve ser id variável ou parâmetro", token.getPosition());
 				}
 			}
+			contextoSemantico.setReferenciaInvalida(false);
 		} else if (contextoEXPR == ContextoEXPR.IMPRESSAO) {
 			if (tipoExpr == Tipo.BOOLEANO) {
 				throw new SemanticError("Tipo inválido para impressão", token.getPosition());
@@ -467,6 +470,7 @@ public class Semantico implements Constants {
 		} else {
 			throw new SemanticError("Operandos incompatíveis", token.getPosition());
 		}
+		contextoSemantico.setReferenciaInvalida(true);
 	}
 
 	public void action144(Token token) throws SemanticError {
@@ -503,6 +507,7 @@ public class Semantico implements Constants {
 		if (!operadorCompativel(op, tipoExprSimples)) {
 			throw new SemanticError("Operador e Operando incompatíveis", token.getPosition());
 		}
+		contextoSemantico.setReferenciaInvalida(true);
 	}
 
 	public void action152(Token token) throws SemanticError {
@@ -542,6 +547,7 @@ public class Semantico implements Constants {
 		if (!operadorCompativel(op, tipoTermo)) {
 			throw new SemanticError("Operador e Operando incompatíveis", token.getPosition());
 		}
+		contextoSemantico.setReferenciaInvalida(true);
 	}
 
 	public void action158(Token token) throws SemanticError {
@@ -598,6 +604,7 @@ public class Semantico implements Constants {
 		} else {
 			throw new SemanticError("Operador 'não' exige operando booleano!", token.getPosition());
 		}
+		contextoSemantico.setReferenciaInvalida(true);
 	}
 
 	public void action165(Token token) throws SemanticError {
@@ -615,6 +622,7 @@ public class Semantico implements Constants {
 		} else {
 			contextoSemantico.setOpUnario(false);
 		}
+		contextoSemantico.setReferenciaInvalida(true);
 	}
 
 	public void action167(Token token) throws SemanticError {
@@ -624,6 +632,7 @@ public class Semantico implements Constants {
 
 	public void action168(Token token) throws SemanticError {
 		contextoSemantico.pushTipoFator(contextoSemantico.popTipoExpr());
+		contextoSemantico.setReferenciaInvalida(true);
 	}
 
 	public void action169(Token token) throws SemanticError {
@@ -634,6 +643,7 @@ public class Semantico implements Constants {
 
 	public void action170(Token token) throws SemanticError {
 		contextoSemantico.pushTipoFator(contextoSemantico.getTipoConst());
+		contextoSemantico.setReferenciaInvalida(true);
 	}
 
 	public void action171(Token token) throws SemanticError {
@@ -646,7 +656,9 @@ public class Semantico implements Constants {
 			ContextoMetodo contextoMetodo = new ContextoMetodo();
 			contextoSemantico.pushContextoMetodo(contextoMetodo);
 			contextoSemantico.setContextoEXPR(ContextoEXPR.PAR_ATUAL);
+			contextoSemantico.setReferenciaInvalida(false);
 		}
+
 	}
 
 	public void action172(Token token) throws SemanticError {
@@ -659,6 +671,7 @@ public class Semantico implements Constants {
 		} else {
 			throw new SemanticError("Erro na quantidade de parâmetros", token.getPosition());
 		}
+		contextoSemantico.setReferenciaInvalida(true);
 	}
 
 	public void action173(Token token) throws SemanticError {
@@ -669,6 +682,7 @@ public class Semantico implements Constants {
 		} else {
 			contextoSemantico.pushTipoVar(contextoSemantico.peekId().getTipo());
 		}
+		contextoSemantico.setReferenciaInvalida(true);
 	}
 
 	public void action174(Token token) throws SemanticError {
