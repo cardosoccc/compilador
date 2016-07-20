@@ -159,7 +159,7 @@ public class TelaPrincipal {
 	public void analiseSintatica(String conteudo) {
 		try {
 			gerente.analisadorSintatico(conteudo);
-			informeUsuario("Nenhum erro léxico ou sintático.");
+			informeUsuario("Nenhum erro léxico, sintático ou semântico.");
 		} catch (AnalysisError e) {
 			tratarErroDeAnalise(e);
 		}
