@@ -418,7 +418,7 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("se verdadeiro entao a := 1;")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
 	}
 
 	@Test
@@ -428,7 +428,7 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("se a entao a := 1 senao a := 2;")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -438,7 +438,7 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("se 3.3 entao a := '1';")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
 	}
 
 	@Test
@@ -448,7 +448,7 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("enquanto a faca ;")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
 	}
 
 	@Test
@@ -458,7 +458,7 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("enquanto a faca ;;")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -468,7 +468,7 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("enquanto 'b' faca a := '1';")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
 	}
 
 	@Test
@@ -478,7 +478,7 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("leia(a);")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -488,7 +488,7 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("leia(a);")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -500,7 +500,7 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("leia(a, f);")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -531,7 +531,7 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("escreva(a);")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -770,7 +770,7 @@ public class GerenteTest {
 				.comando("a :=  falso e verdadeiro;")
 				.comando("a :=  verdadeiro ou falso;")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
 	}
 
 	@Test
@@ -1044,7 +1044,7 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("a := f(1);")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -1087,7 +1087,7 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("f(1+a)")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -1099,7 +1099,7 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("f(a+a)")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -1111,7 +1111,7 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("f(a*a)")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -1123,7 +1123,7 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("f(a=a)")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -1135,7 +1135,7 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("f(a+1)")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -1147,7 +1147,21 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("f(a, 1+a)")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void funcaoSendoPassadaComoParametroReferencia() throws Exception {
+		gerente.analisadorSintatico(programa()
+				.declaracaoVariavel(Tipo.INTEIRO, "a")
+				.declaracaoMetodo("f", "ref x:inteiro", Tipo.NULO)
+				.blocoMetodo()
+				.declaracaoMetodo("g", "val x:inteiro", Tipo.INTEIRO)
+				.blocoMetodo("retorne 1;")
+				.abreBloco()
+				.comando("f(g(1));")
+				.fechaBlocoPrograma()
+				.build());
 	}
 
 	@Test(expected=SemanticError.class)
@@ -1159,7 +1173,7 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("f(a, a, -a)")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
 	}
 
 	@Test
@@ -1171,7 +1185,7 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("f(a, a+1, a)")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
 	}
 
 	@Test
@@ -1183,7 +1197,7 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("f(a+1, a, (a))")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
 	}
 
 	@Test
@@ -1200,7 +1214,45 @@ public class GerenteTest {
 				.abreBloco()
 				.comando("a := 1.0;")
 				.fechaBlocoPrograma()
-				.build(true));
+				.build());
+	}
+
+
+	@Test
+	public void itemDeVetorPassadoComoParametroReferencia() throws Exception {
+		gerente.analisadorSintatico(programa()
+				.declaracaoVetor(Tipo.INTEIRO, "1", "a")
+				.declaracaoMetodo("f", "ref x:inteiro", Tipo.NULO)
+				.blocoMetodo()
+				.blocoPrograma("f(a[0]);")
+				.build());
+	}
+
+	@Test
+	public void variavelEntreParentesesComoParametroReferencia() throws Exception {
+		gerente.analisadorSintatico(programa()
+				.declaracaoVariavel(Tipo.INTEIRO, "a")
+				.declaracaoMetodo("f", "ref x:inteiro", Tipo.NULO)
+				.blocoMetodo()
+				.blocoPrograma("f((a));")
+				.build());
+	}
+
+
+	@Test(expected=SemanticError.class)
+	public void menosNaoMenos() throws Exception {
+		gerente.analisadorSintatico(programa()
+				.declaracaoVariavel(Tipo.INTEIRO, "a")
+				.blocoPrograma("a := - nao - 1;")
+				.build());
+	}
+
+	@Test(expected=SemanticError.class)
+	public void naoMenosNao() throws Exception {
+		gerente.analisadorSintatico(programa()
+				.declaracaoVariavel(Tipo.INTEIRO, "a")
+				.blocoPrograma("a := nao - nao falso;")
+				.build());
 	}
 
 	private ProgramaBuilder programa() {

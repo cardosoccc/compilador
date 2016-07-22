@@ -794,6 +794,7 @@ public class SemanticoTest {
 		IdMetodo idMetodo = new IdMetodo(token().getLexeme());
 		idMetodo.setTipo(Tipo.NULO);
 		contexto.pushIdMetodo(idMetodo);
+		contexto.pushTipoExpr(Tipo.BOOLEANO);
 
 		semantico.executeAction(132, token());
 	}
@@ -1078,8 +1079,11 @@ public class SemanticoTest {
 	@Test(expected=SemanticError.class)
 	public void action139DeveLancarExcecaoCasoIdSejaMetodoENumParametrosFormaisDiferentesDeNumParametrosAtuais() throws Exception {
 		IdMetodo id = new IdMetodo(token().getLexeme());
-		contexto.setNumParametrosFormais(1);
+		id.incluirParametro(new IdParametro(""));
 		contexto.pushId(id);
+		ContextoMetodo contextoMetodo = new ContextoMetodo();
+		contextoMetodo.setNumParametrosAtuais(0);
+		contexto.pushContextoMetodo(contextoMetodo);
 
 		semantico.executeAction(139, token());
 	}
@@ -1240,6 +1244,7 @@ public class SemanticoTest {
 		contexto.pushId(idMetodo);
 		contexto.pushTipoExpr(Tipo.INTEIRO);
 		contexto.setContextoEXPR(ContextoEXPR.PAR_ATUAL);
+		contexto.setReferenciaValida(true);
 
 		tabela.incluirIdentificador(new IdVariavel(token().getLexeme()));
 
@@ -1259,6 +1264,7 @@ public class SemanticoTest {
 		contexto.pushId(idMetodo);
 		contexto.pushTipoExpr(Tipo.INTEIRO);
 		contexto.setContextoEXPR(ContextoEXPR.PAR_ATUAL);
+		contexto.setReferenciaValida(true);
 
 		tabela.incluirIdentificador(new IdParametro(token().getLexeme()));
 
@@ -1278,6 +1284,7 @@ public class SemanticoTest {
 		contexto.pushId(idMetodo);
 		contexto.pushTipoExpr(Tipo.INTEIRO);
 		contexto.setContextoEXPR(ContextoEXPR.PAR_ATUAL);
+		contexto.setReferenciaValida(true);
 		tabela.incluirIdentificador(new IdParametro(token().getLexeme()));
 		assertNotNull(contexto.peekTipoExpr());
 
@@ -1980,6 +1987,7 @@ public class SemanticoTest {
 
 		ContextoMetodo contextoMetodo = new ContextoMetodo();
 		contextoMetodo.setNumParametrosAtuais(1);
+		contexto.pushContextoMetodo(contextoMetodo);
 
 		semantico.executeAction(172, token());
 	}

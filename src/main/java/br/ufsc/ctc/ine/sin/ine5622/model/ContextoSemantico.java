@@ -31,7 +31,7 @@ public class ContextoSemantico {
 	private ContextoEXPR contextoEXPR;
 	private boolean opNega;
 	private boolean opUnario;
-	private boolean referenciaInvalida;
+	private boolean referenciaValida;
 
 	// Variáveis empilhadas para representar expressões aninhadas
 	private Stack<OperadorRel> pilhaOperadoresRel;
@@ -363,12 +363,12 @@ public class ContextoSemantico {
 		this.opUnario = opUnario;
 	}
 
-	public boolean isReferenciaInvalida() {
-		return referenciaInvalida;
+	public boolean isReferenciaValida() {
+		return referenciaValida;
 	}
 
-	public void setReferenciaInvalida(boolean referenciaInvalida) {
-		this.referenciaInvalida = referenciaInvalida;
+	public void setReferenciaValida(boolean referenciaValida) {
+		this.referenciaValida = referenciaValida;
 	}
 
 }
